@@ -1,8 +1,33 @@
 {
   "name": "gnidoc-terces",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
+  "description": "gnidoc terceS (read it backward 😉) is a next-generation multi-AI orchestration engine that turns raw ideas into complete, production-ready applications",
+  "keywords": [
+    "gnidoc",
+    "terces",
+    "ai",
+    "builder",
+    "orchestration",
+    "automation",
+    "no",
+    "code"
+  ],
+  "homepage": "https://github.com/dobleduche/gnidoctercesv1#readme",
+  "bugs": {
+    "url": "https://github.com/dobleduche/gnidoctercesv1/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dobleduche/gnidoctercesv1.git"
+  },
+  "license": "Apache-2.0",
+  "author": "Intruvurt Labs",
   "type": "module",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
