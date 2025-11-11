@@ -174,3 +174,5 @@ prisma/*.db-journal
 
 # Turborepo
 .turbo
+.env
+server/.env
