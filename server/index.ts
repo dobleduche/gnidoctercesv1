@@ -1,16 +1,9 @@
-// server/index.ts
 import "dotenv/config";
-// Fix: Use default express import to avoid type conflicts.
 import express from "express";
 import cors from "cors";
 import path from "path";
 import process from "process";
 
-// Remove legacy routes that are not defined in the project
-// import { router as generate } from "./routes/generate";
-// import { router as discovery } from "./routes/discovery";
-// import { router as publish } from "./routes/publish";
-// import { router as clips } from "./routes/clips";
 import { router as billing } from "./routes/billing";
 
 // NEW Routers
@@ -19,9 +12,6 @@ import { scaffold } from "./routes/scaffold";
 import { github } from "./routes/github";
 import { proxy } from "./routes/proxy";
 import { referral } from "./routes/referral";
-
-// Boot background workers (idempotent import)
-// import "../clipWorker";
 
 const app = express();
 
@@ -37,42 +27,25 @@ app.use(
 );
 
 app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ limit: "50mb", extended: true })); // for form bodies
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 /* =========================
    Routes
 ========================= */
-// app.use("/api/generate", generate);
-// app.use("/api/discovery", discovery);
-// app.use("/api/publish", publish);
-// app.use("/api/clips", clips);
 app.use("/api/billing", billing);
-
-// NEW: AI routes
 app.use("/api/ai", ai);
-
-// NEW: Scaffolder route
 app.use("/api/scaffold", scaffold);
-
-// NEW: GitHub route
 app.use("/api/github", github);
-
-// NEW: Proxy for 3rd party APIs
 app.use("/api/proxy", proxy);
-
-// NEW: Referrals route
 app.use("/api/referral", referral);
 
 // Simple health check
-// Fix: Use explicit express types for req and res.
 app.get("/api/health", (_req: express.Request, res: express.Response) => {
-  res.status(200).json({ status: "ok" });
+  res.status(200).json({ status: "ok", message: "Server is working!" });
 });
 
-// API 404 Handler - This must be after all other API routes.
-// It will catch any request to a '/api/*' endpoint that hasn't been handled.
-// Fix: Use explicit express types for req and res.
-app.use('/api/*', (req: express.Request, res: express.Response) => {
+// API 404 Handler - FIXED ROUTE PATTERN
+app.use('/api/:any*', (req: express.Request, res: express.Response) => {
     res.status(404).json({
         ok: false,
         error: "Not Found",
@@ -84,11 +57,10 @@ app.use('/api/*', (req: express.Request, res: express.Response) => {
    Non-API Routes
 ========================= */
 
-// NEW: Preview server for generated apps
+// Preview server for generated apps
 const previewRouter = express.Router({ mergeParams: true });
 
-// Mock API endpoint for the generated app's client server to hit
-// Fix: Use explicit express types for req and res.
+// Mock API endpoint
 previewRouter.post('/api/test', (req: express.Request, res: express.Response) => {
     const { name } = req.body;
     if (!name) {
@@ -97,9 +69,7 @@ previewRouter.post('/api/test', (req: express.Request, res: express.Response) =>
     res.json({ message: `Hello, ${name}! Your full-stack smoke test was successful.` });
 });
 
-
-// Static file serving for the generated app's client build
-// Fix: Use explicit express types for req, res, and next.
+// Static file serving
 previewRouter.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
     const { projectId } = req.params;
     if (!projectId || projectId.includes('..') || projectId.includes('/')) {
@@ -109,8 +79,7 @@ previewRouter.use((req: express.Request, res: express.Response, next: express.Ne
     express.static(staticPath)(req, res, next);
 });
 
-// Catch-all for the SPA to work correctly
-// Fix: Use explicit express types for req and res.
+// Catch-all for the SPA
 previewRouter.get('*', (req: express.Request, res: express.Response) => {
     const { projectId } = req.params;
     if (!projectId || projectId.includes('..') || projectId.includes('/')) {
@@ -125,13 +94,12 @@ previewRouter.get('*', (req: express.Request, res: express.Response) => {
 });
 app.use('/preview/:projectId', previewRouter);
 
-// Serve generated app source files for download browsing
+// Serve generated app source files
 app.use("/generated", express.static(path.join(process.cwd(), 'generated')));
 
 /* =========================
    Central error handler
 ========================= */
-// Fix: Use explicit express types for req, res, and next.
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error("[server] Unhandled error:", err);
   res.status(err?.status || 500).json({
@@ -143,9 +111,7 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 /* =========================
    Startup
 ========================= */
-const port = Number(process.env.PORT) || 5174;
+const port = Number(process.env.PORT) || 3001; // Changed to 3001 to match your frontend
 app.listen(port, () => {
-  console.log(`API up on :${port}`);
+  console.log(`✅ API server running on http://localhost:${port}`);
 });
-
-export default app;
