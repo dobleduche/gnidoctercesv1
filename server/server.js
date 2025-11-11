@@ -1,3 +1,5 @@
+console.log('Server file is loading...');
+console.log('Express version:', require('express/package.json').version);
 const express = require('express');
 const app = express();
 const PORT = 3001;
