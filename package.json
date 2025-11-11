@@ -33,7 +33,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "serve": "node server/server.js",
-    "serve:api": "node server/server.js"
+    "serve:api": "npx tsx server/index.ts"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",
