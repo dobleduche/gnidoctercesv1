@@ -10,8 +10,7 @@
     "builder",
     "orchestration",
     "automation",
-    "no",
-    "code"
+    "no code"
   ],
   "homepage": "https://github.com/dobleduche/gnidoctercesv1#readme",
   "bugs": {
@@ -30,31 +29,27 @@
   },
   "scripts": {
     "dev": "vite",
+    "start": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "serve": "node server/server.js",
+    "serve:api": "node server/server.js"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",
-    "@vitejs/plugin-react": "^5.1.0",
-    "child_process": "^1.0.2",
     "concurrently": "^9.2.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "framer-motion": "^11.3.12",
-    "fs": "^0.0.1-security",
     "next": "^16.0.1",
-    "path": "^0.12.7",
-    "process": "^0.11.10",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "stripe": "^19.3.0",
-    "util": "^0.12.5",
-    "vite": "^7.2.2"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "stripe": "^19.3.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
-    "@vitejs/plugin-react": "^5.0.0",
+    "@vitejs/plugin-react": "^5.1.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
   }
