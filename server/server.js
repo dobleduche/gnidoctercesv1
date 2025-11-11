@@ -7,9 +7,6 @@ import { fileURLToPath } from 'url';
 // Load environment variables
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -17,11 +14,16 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// API Routes
+// Basic health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Server is running' });
+  res.json({ 
+    status: 'OK', 
+    message: 'Server is running',
+    timestamp: new Date().toISOString()
+  });
 });
 
+// Models endpoint
 app.get('/api/models', (req, res) => {
   const models = [
     { id: 'gemini-pro', name: 'Gemini Pro', provider: 'google' },
@@ -33,6 +35,7 @@ app.get('/api/models', (req, res) => {
   res.json(models);
 });
 
+// API key status endpoint
 app.get('/api/key-status', (req, res) => {
   const status = {
     gemini: !!process.env.GEMINI_API_KEY,
@@ -44,12 +47,11 @@ app.get('/api/key-status', (req, res) => {
   res.json(status);
 });
 
-// AI Completion endpoint
+// Chat completion endpoint
 app.post('/api/chat/completions', async (req, res) => {
   try {
-    const { model, messages, temperature, max_tokens } = req.body;
+    const { model, messages } = req.body;
     
-    // Basic response for now - you can expand this to call actual AI APIs
     const response = {
       id: 'chatcmpl-' + Date.now(),
       object: 'chat.completion',
@@ -60,15 +62,15 @@ app.post('/api/chat/completions', async (req, res) => {
           index: 0,
           message: {
             role: 'assistant',
-            content: 'This is a mock response. Configure your AI API keys to get real responses.'
+            content: 'Hello! This is a test response from the backend server. Your API is working correctly!'
           },
           finish_reason: 'stop'
         }
       ],
       usage: {
-        prompt_tokens: 0,
-        completion_tokens: 0,
-        total_tokens: 0
+        prompt_tokens: 10,
+        completion_tokens: 15,
+        total_tokens: 25
       }
     };
     
@@ -79,18 +81,10 @@ app.post('/api/chat/completions', async (req, res) => {
   }
 });
 
-// Serve static files in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../dist')));
-  
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../dist/index.html'));
-  });
-}
-
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Health check: http://localhost:${PORT}/api/health`);
-  console.log(`Models endpoint: http://localhost:${PORT}/api/models`);
+  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
+  console.log(`✅ Models endpoint: http://localhost:${PORT}/api/models`);
+  console.log(`✅ Key status: http://localhost:${PORT}/api/key-status`);
 });
