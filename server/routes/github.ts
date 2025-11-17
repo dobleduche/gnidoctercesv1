@@ -52,7 +52,7 @@ github.post("/create-repo", async (req: express.Request, res: express.Response) 
         return res.json({ ok: true, repoUrl });
 
     } catch (err: any) {
-        console.error(`[${projectId}] GitHub process failed:`, err);
+        console.error("[GitHub process failed for %s:]", projectId, err);
         return res.status(500).json({ ok: false, error: err?.message ?? "Failed to create repository" });
     }
 });
