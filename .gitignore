@@ -176,3 +176,6 @@ prisma/*.db-journal
 .turbo
 .env
 server/.env
+.env
+*.env
+.env.local
