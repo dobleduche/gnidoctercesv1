@@ -1,0 +1,5 @@
+{
+  "name": "gnidoC terceS",
+  "description": "A no-code AI app builder that turns a single prompt into a full-stack, secure, shippable mobile or web app. This UI represents the generator-runner, where users input prompts and visualize the multi-agent build process.",
+  "requestFramePermissions": []
+}

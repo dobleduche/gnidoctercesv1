@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: gnidoc-terces-api
+    env: node
+    plan: starter
+    buildCommand: "npm install && npm run build"
+    startCommand: "node server/index.js"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: REDIS_URL
+        fromService:
+          name: gnidoc-terces-redis
+          type: redis
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+  - type: worker
+    name: gnidoc-terces-worker
+    env: node
+    plan: starter
+    buildCommand: "npm install && npm run build"
+    startCommand: "node server/index.js" # same codebase; worker init happens inside
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: REDIS_URL
+        fromService:
+          name: gnidoc-terces-redis
+          type: redis
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+databases:
+  - name: gnidoc-terces-redis
+    plan: starter
+    ipAllowList: []
