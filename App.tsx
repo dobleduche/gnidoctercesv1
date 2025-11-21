@@ -3,30 +3,31 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import Footer from './components/Footer';
 import FuturisticSphere from './components/FuturisticSphere';
-import Tour from './components/Tour';
 import PromptInput from './components/PromptInput';
 import AgentPipeline from './components/AgentPipeline';
 import ResultsDisplay from './components/ResultsDisplay';
 import ProgressBar from './components/ProgressBar';
-import UpgradeModal from './components/UpgradeModal';
-import PrivacyPolicyModal from './components/PrivacyPolicyModal';
 import PromptEngineer from './components/PromptEngineer';
-import OrchestrationScreen from './components/OrchestrationScreen';
 import { useAppGenerator } from './hooks/useAppGenerator';
 import { GenerationState, AgentStatus, TierId, AIModel } from './types';
-import ReferralsModal from './components/ReferralsModal';
 import Notification from './components/Notification';
-import ChatWidget from './components/ChatWidget';
-import AgentDetailModal from './components/AgentDetailModal';
 import { useFeatureFlags } from './lib/featureFlags';
 import { useUserStore } from './state/userStore';
 import { useAuth } from './hooks/useAuth';
 import useDarkMode from './hooks/useDarkMode';
-import UserProfileModal from './components/UserProfileModal';
 import CookieConsent from './components/CookieConsent';
 
+// Lazy load heavy components and modals
 const Features = lazy(() => import('./components/Features'));
 const FAQ = lazy(() => import('./components/FAQ'));
+const Tour = lazy(() => import('./components/Tour'));
+const UpgradeModal = lazy(() => import('./components/UpgradeModal'));
+const PrivacyPolicyModal = lazy(() => import('./components/PrivacyPolicyModal'));
+const OrchestrationScreen = lazy(() => import('./components/OrchestrationScreen'));
+const ReferralsModal = lazy(() => import('./components/ReferralsModal'));
+const ChatWidget = lazy(() => import('./components/ChatWidget'));
+const AgentDetailModal = lazy(() => import('./components/AgentDetailModal'));
+const UserProfileModal = lazy(() => import('./components/UserProfileModal'));
 
 const Loader: React.FC = () => (
   <div
@@ -292,6 +293,63 @@ const App: React.FC = () => {
         </main>
         <Footer onOpenPrivacyPolicy={openPrivacyModal} isDevPanelOpen={isDevPanelOpen} />
       </div>
+      {isTourOpen && (
+        <Suspense fallback={null}>
+          <Tour isOpen={isTourOpen} onClose={() => setIsTourOpen(false)} />
+        </Suspense>
+      )}
+      {flags.ff_payments && isUpgradeModalOpen && (
+        <Suspense fallback={null}>
+          <UpgradeModal isOpen={isUpgradeModalOpen} onClose={() => setIsUpgradeModalOpen(false)} onUpgrade={handleModalUpgrade} />
+        </Suspense>
+      )}
+      {isPrivacyModalOpen && (
+        <Suspense fallback={null}>
+          <PrivacyPolicyModal isOpen={isPrivacyModalOpen} onClose={() => setIsPrivacyModalOpen(false)} />
+        </Suspense>
+      )}
+      {flags.ff_beta_dashboard && isOrchestrationScreenOpen && (
+        <Suspense fallback={null}>
+          <OrchestrationScreen 
+            isOpen={isOrchestrationScreenOpen} 
+            onClose={() => setIsOrchestrationScreen(false)} 
+            onUpgrade={handleOrchestrationUpgrade}
+            currentTierId={selectedTier}
+            flags={flags}
+          />
+        </Suspense>
+      )}
+      {isReferralsModalOpen && (
+        <Suspense fallback={null}>
+          <ReferralsModal 
+            isOpen={isReferralsModalOpen} 
+            onClose={() => setIsReferralsModalOpen(false)}
+            referralLink={referralLink}
+          />
+        </Suspense>
+      )}
+      {selectedAgent && (
+        <Suspense fallback={null}>
+          <AgentDetailModal 
+            isOpen={!!selectedAgent} 
+            onClose={handleCloseAgentModal} 
+            agent={selectedAgent} 
+          />
+        </Suspense>
+      )}
+      {isUserProfileOpen && (
+        <Suspense fallback={null}>
+          <UserProfileModal
+            isOpen={isUserProfileOpen}
+            onClose={() => setIsUserProfileOpen(false)}
+          />
+        </Suspense>
+      )}
+      {flags.ff_ai_features && (
+        <Suspense fallback={null}>
+          <ChatWidget />
+        </Suspense>
+      )}
       <Tour isOpen={isTourOpen} onClose={() => setIsTourOpen(false)} />
       {flags.ff_payments && (
         <UpgradeModal
