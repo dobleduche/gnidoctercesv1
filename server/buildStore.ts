@@ -4,23 +4,23 @@ import type { BuildResult } from './orchestrator.js';
 
 const BUCKET = 'build-artifacts';
 
-export async function saveBuildResultToStore(result: BuildResult & {
-  workspaceId: string;
-  userId: string;
-}) {
+export async function saveBuildResultToStore(
+  result: BuildResult & {
+    workspaceId: string;
+    userId: string;
+  }
+) {
   // 1) upsert row in builds table
-  const { error: dbError } = await supabaseAdmin
-    .from('builds')
-    .upsert({
-      id: result.buildId,
-      workspace_id: result.workspaceId,
-      user_id: result.userId,
-      target: result.target,
-      stack: result.stack,
-      status: 'completed',
-      summary: result.summary,
-      preview_entry: result.previewEntry
-    });
+  const { error: dbError } = await supabaseAdmin.from('builds').upsert({
+    id: result.buildId,
+    workspace_id: result.workspaceId,
+    user_id: result.userId,
+    target: result.target,
+    stack: result.stack,
+    status: 'completed',
+    summary: result.summary,
+    preview_entry: result.previewEntry,
+  });
 
   if (dbError) {
     console.error('Error upserting build row:', dbError);
@@ -34,7 +34,7 @@ export async function saveBuildResultToStore(result: BuildResult & {
     .from(BUCKET)
     .upload(`builds/${result.buildId}.json`, payload, {
       contentType: 'application/json',
-      upsert: true
+      upsert: true,
     });
 
   if (storageError) {
@@ -76,6 +76,6 @@ export async function getBuildResultFromStore(buildId: string) {
     stack: buildRow.stack as string,
     summary: buildRow.summary as string,
     previewEntry: buildRow.preview_entry as string,
-    files
+    files,
   };
 }

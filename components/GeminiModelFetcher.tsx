@@ -23,7 +23,9 @@ const GeminiModelFetcher: React.FC = () => {
     setError(null);
 
     try {
-      const data = await safeFetch<{ ok: boolean; models: GeminiModel[]; error?: string }>('/api/ai/list-gemini-models');
+      const data = await safeFetch<{ ok: boolean; models: GeminiModel[]; error?: string }>(
+        '/api/ai/list-gemini-models'
+      );
 
       if (!data.ok) {
         throw new Error(data.error || 'Failed to fetch model list.');
@@ -31,11 +33,11 @@ const GeminiModelFetcher: React.FC = () => {
 
       setModels(data.models);
     } catch (err) {
-      console.error("Gemini model fetch failed:", err);
+      console.error('Gemini model fetch failed:', err);
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("An unknown error occurred.");
+        setError('An unknown error occurred.');
       }
     } finally {
       setIsLoading(false);
@@ -84,23 +86,28 @@ const GeminiModelFetcher: React.FC = () => {
     if (models.length > 0) {
       return (
         <div className="p-4 md:p-6">
-            <div className="space-y-4">
-                {models.map(model => (
-                    <div key={model.name} className="p-4 bg-dark-bg/50 border border-glass-border rounded-lg">
-                        <div className="flex items-center gap-3">
-                            <GeminiIcon className="h-6 w-6 flex-shrink-0" />
-                            <div>
-                                <h3 className="font-bold text-gray-200">{model.displayName}</h3>
-                                <div className="flex items-center gap-2">
-                                  <p className="text-xs font-mono text-cyan">{model.name}</p>
-                                  <span className="px-1.5 py-0.5 text-[10px] bg-cyan/10 text-cyan rounded-full font-semibold">{model.version}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <p className="mt-3 text-sm text-gray-400">{model.description}</p>
+          <div className="space-y-4">
+            {models.map((model) => (
+              <div
+                key={model.name}
+                className="p-4 bg-dark-bg/50 border border-glass-border rounded-lg"
+              >
+                <div className="flex items-center gap-3">
+                  <GeminiIcon className="h-6 w-6 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-bold text-gray-200">{model.displayName}</h3>
+                    <div className="flex items-center gap-2">
+                      <p className="text-xs font-mono text-cyan">{model.name}</p>
+                      <span className="px-1.5 py-0.5 text-[10px] bg-cyan/10 text-cyan rounded-full font-semibold">
+                        {model.version}
+                      </span>
                     </div>
-                ))}
-            </div>
+                  </div>
+                </div>
+                <p className="mt-3 text-sm text-gray-400">{model.description}</p>
+              </div>
+            ))}
+          </div>
         </div>
       );
     }

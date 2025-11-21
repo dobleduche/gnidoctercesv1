@@ -11,12 +11,17 @@ const FeatureFlagManager: React.FC = () => {
 
   return (
     <div className="bg-glass-bg border border-glass-border p-4 rounded-lg mt-8 w-full max-w-md mx-auto">
-      <h3 className="font-bold text-center text-gray-300 mb-3 font-orbitron tracking-wide">Feature Flags (Dev Panel)</h3>
+      <h3 className="font-bold text-center text-gray-300 mb-3 font-orbitron tracking-wide">
+        Feature Flags (Dev Panel)
+      </h3>
       <div className="space-y-2">
-        {Object.keys(flags).map(key => {
+        {Object.keys(flags).map((key) => {
           const flagId = key as FeatureFlagId;
           return (
-            <label key={flagId} className="flex items-center justify-between p-2 bg-dark-secondary rounded-md cursor-pointer hover:bg-white/5 transition-colors">
+            <label
+              key={flagId}
+              className="flex items-center justify-between p-2 bg-dark-secondary rounded-md cursor-pointer hover:bg-white/5 transition-colors"
+            >
               <span className="text-sm text-gray-200 font-mono">{flagId}</span>
               <div className="relative">
                 <input

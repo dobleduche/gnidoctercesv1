@@ -57,7 +57,7 @@ export async function handleLogin(req: Request, res: Response) {
       .insert({
         owner_id: user.id,
         name: `${email.split('@')[0]}'s workspace`,
-        plan: 'free'
+        plan: 'free',
       })
       .select('*')
       .single();
@@ -75,7 +75,7 @@ export async function handleLogin(req: Request, res: Response) {
     {
       sub: user.id,
       email,
-      workspaceId
+      workspaceId,
     },
     JWT_SECRET,
     { expiresIn: '7d' }
@@ -85,7 +85,7 @@ export async function handleLogin(req: Request, res: Response) {
     token,
     userId: user.id,
     workspaceId,
-    plan: workspace?.plan ?? 'free'
+    plan: workspace?.plan ?? 'free',
   });
 }
 
@@ -107,7 +107,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
     req.auth = {
       userId: decoded.sub,
       workspaceId: decoded.workspaceId,
-      email: decoded.email
+      email: decoded.email,
     };
 
     next();

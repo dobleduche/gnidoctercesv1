@@ -6,7 +6,9 @@ const AnimatedShinyText: React.FC<{
   className?: string;
 }> = ({ children, className }) => {
   return (
-    <div className={`relative inline-flex items-center justify-center overflow-hidden ${className}`}>
+    <div
+      className={`relative inline-flex items-center justify-center overflow-hidden ${className}`}
+    >
       <span className="relative z-10">{children}</span>
       <motion.div
         className="absolute inset-0 z-0"

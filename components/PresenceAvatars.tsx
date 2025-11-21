@@ -13,25 +13,25 @@ const PresenceAvatars: React.FC<PresenceAvatarsProps> = ({ collaborators }) => {
 
   return (
     <div className="flex flex-col items-center gap-2 h-10">
-        <p className="text-xs text-gray-400">Live Collaborators</p>
-        <div className="flex -space-x-2">
+      <p className="text-xs text-gray-400">Live Collaborators</p>
+      <div className="flex -space-x-2">
         <AnimatePresence>
-            {collaborators.map((c, index) => (
+          {collaborators.map((c, index) => (
             <motion.div
-                key={c.id}
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.5 }}
-                transition={{ delay: index * 0.1 }}
-                className="relative h-6 w-6 rounded-full border-2 border-dark-bg flex items-center justify-center font-bold text-xs text-white"
-                style={{ backgroundColor: c.color }}
-                title={c.name}
+              key={c.id}
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.5 }}
+              transition={{ delay: index * 0.1 }}
+              className="relative h-6 w-6 rounded-full border-2 border-dark-bg flex items-center justify-center font-bold text-xs text-white"
+              style={{ backgroundColor: c.color }}
+              title={c.name}
             >
-                {c.initials}
+              {c.initials}
             </motion.div>
-            ))}
+          ))}
         </AnimatePresence>
-        </div>
+      </div>
     </div>
   );
 };

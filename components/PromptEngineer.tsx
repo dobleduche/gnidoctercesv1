@@ -9,18 +9,25 @@ interface PromptEngineerProps {
 }
 
 const BlueprintSection: React.FC<{ title: string; items: string[] }> = ({ title, items }) => (
-    <div className="mb-3">
-        <h4 className="font-semibold text-gray-300">{title}:</h4>
-        <ul className="list-disc list-inside pl-4 text-gray-400">
-            {items.map((item, index) => <li key={index}>{item}</li>)}
-        </ul>
-    </div>
+  <div className="mb-3">
+    <h4 className="font-semibold text-gray-300">{title}:</h4>
+    <ul className="list-disc list-inside pl-4 text-gray-400">
+      {items.map((item, index) => (
+        <li key={index}>{item}</li>
+      ))}
+    </ul>
+  </div>
 );
 
-const PromptEngineer: React.FC<PromptEngineerProps> = ({ originalPrompt, engineeredPrompt, onProceed }) => {
+const PromptEngineer: React.FC<PromptEngineerProps> = ({
+  originalPrompt,
+  engineeredPrompt,
+  onProceed,
+}) => {
   const [displayedFinalPrompt, setDisplayedFinalPrompt] = useState('');
-  
-  const isEngineeringComplete = engineeredPrompt && displayedFinalPrompt.length === engineeredPrompt.final_prompt.length;
+
+  const isEngineeringComplete =
+    engineeredPrompt && displayedFinalPrompt.length === engineeredPrompt.final_prompt.length;
 
   useEffect(() => {
     if (engineeredPrompt?.final_prompt) {
@@ -43,34 +50,42 @@ const PromptEngineer: React.FC<PromptEngineerProps> = ({ originalPrompt, enginee
         <CogIcon className="h-6 w-6 animate-spin" />
         Engineering Prompt...
       </h2>
-      
+
       <div className="w-full space-y-4">
         <div>
           <h3 className="text-sm font-semibold text-gray-400 mb-2">Your Initial Idea:</h3>
-          <p className="text-sm p-3 bg-dark-bg/30 rounded-lg border border-glass-border italic text-gray-300">"{originalPrompt}"</p>
+          <p className="text-sm p-3 bg-dark-bg/30 rounded-lg border border-glass-border italic text-gray-300">
+            "{originalPrompt}"
+          </p>
         </div>
-        
+
         <div className="min-h-[200px]">
-            <h3 className="text-sm font-semibold text-gray-400 mb-2">AI-Refined Blueprint:</h3>
-            {!engineeredPrompt ? (
-                 <div className="text-center py-8">
-                    <p className="text-cyan animate-pulse">Analyzing and refining your request...</p>
+          <h3 className="text-sm font-semibold text-gray-400 mb-2">AI-Refined Blueprint:</h3>
+          {!engineeredPrompt ? (
+            <div className="text-center py-8">
+              <p className="text-cyan animate-pulse">Analyzing and refining your request...</p>
+            </div>
+          ) : (
+            <div className="space-y-3 text-sm p-3 bg-dark-bg/30 rounded-lg border border-cyan/50 text-gray-200">
+              {engineeredPrompt.goals.length > 0 && (
+                <BlueprintSection title="Goals" items={engineeredPrompt.goals} />
+              )}
+              {engineeredPrompt.stack.length > 0 && (
+                <BlueprintSection title="Tech Stack" items={engineeredPrompt.stack} />
+              )}
+              {engineeredPrompt.constraints.length > 0 && (
+                <BlueprintSection title="Constraints" items={engineeredPrompt.constraints} />
+              )}
+
+              <div className="pt-2">
+                <h4 className="font-semibold text-gray-300">Final Prompt:</h4>
+                <div className="font-mono whitespace-pre-wrap">
+                  {displayedFinalPrompt}
+                  {!isEngineeringComplete && <span className="animate-ping">_</span>}
                 </div>
-            ) : (
-                <div className="space-y-3 text-sm p-3 bg-dark-bg/30 rounded-lg border border-cyan/50 text-gray-200">
-                    {engineeredPrompt.goals.length > 0 && <BlueprintSection title="Goals" items={engineeredPrompt.goals} />}
-                    {engineeredPrompt.stack.length > 0 && <BlueprintSection title="Tech Stack" items={engineeredPrompt.stack} />}
-                    {engineeredPrompt.constraints.length > 0 && <BlueprintSection title="Constraints" items={engineeredPrompt.constraints} />}
-                    
-                    <div className="pt-2">
-                      <h4 className="font-semibold text-gray-300">Final Prompt:</h4>
-                      <div className="font-mono whitespace-pre-wrap">
-                          {displayedFinalPrompt}
-                          {!isEngineeringComplete && <span className="animate-ping">_</span>}
-                      </div>
-                    </div>
-                </div>
-            )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -80,9 +95,7 @@ const PromptEngineer: React.FC<PromptEngineerProps> = ({ originalPrompt, enginee
         className="group relative inline-flex items-center justify-center px-8 py-3 mt-8 text-lg font-bold text-white bg-gradient-to-r from-magenta to-cyan rounded-full overflow-hidden transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-neon-magenta focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark-bg focus:ring-cyan"
       >
         <span className="absolute inset-0 bg-dark-bg transition-all duration-300 group-hover:opacity-0"></span>
-        <span className="relative">
-          Proceed to Build
-        </span>
+        <span className="relative">Proceed to Build</span>
       </button>
     </div>
   );

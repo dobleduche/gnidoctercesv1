@@ -8,10 +8,14 @@ const connection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379'
 export const buildQueue = new Queue<BuildRequest>('buildQueue', { connection });
 
 export function initBuildWorker() {
-  const worker = new Worker<BuildRequest>('buildQueue', async (job: Job<BuildRequest>) => {
-    const result: BuildResult = await runBuildPipeline(job.data);
-    return result;
-  }, { connection });
+  const worker = new Worker<BuildRequest>(
+    'buildQueue',
+    async (job: Job<BuildRequest>) => {
+      const result: BuildResult = await runBuildPipeline(job.data);
+      return result;
+    },
+    { connection }
+  );
 
   worker.on('completed', (job, result) => {
     console.log(`✅ Build job ${job.id} completed (${result.artifactType})`);

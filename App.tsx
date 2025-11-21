@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -31,8 +30,15 @@ const AgentDetailModal = lazy(() => import('./components/AgentDetailModal'));
 const UserProfileModal = lazy(() => import('./components/UserProfileModal'));
 
 const Loader: React.FC = () => (
-  <div className="flex justify-center items-center py-32" role="status" aria-label="Loading content">
-    <div className="w-12 h-12 border-4 border-cyan border-t-transparent rounded-full animate-spin" aria-hidden="true"></div>
+  <div
+    className="flex justify-center items-center py-32"
+    role="status"
+    aria-label="Loading content"
+  >
+    <div
+      className="w-12 h-12 border-4 border-cyan border-t-transparent rounded-full animate-spin"
+      aria-hidden="true"
+    ></div>
   </div>
 );
 
@@ -50,27 +56,26 @@ const App: React.FC = () => {
   const [isUserProfileOpen, setIsUserProfileOpen] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<AgentStatus | null>(null);
   const [isDevPanelOpen, setIsDevPanelOpen] = useState(false);
-  
+
   const [selectedTier, setSelectedTier] = useState<TierId>('spark');
-  
+
   useEffect(() => {
     // Sync local selectedTier with user's actual tier from auth
     if (tier) {
       setSelectedTier(tier);
     }
   }, [tier]);
-  
+
   const [selectedModel, setSelectedModel] = useState<AIModel>('gemini');
 
   useEffect(() => {
     try {
-        const settings = JSON.stringify({ selectedTier: tier || 'spark', selectedModel });
-        localStorage.setItem('gnidoc-terces-settings', settings);
+      const settings = JSON.stringify({ selectedTier: tier || 'spark', selectedModel });
+      localStorage.setItem('gnidoc-terces-settings', settings);
     } catch (error) {
-        console.warn('Failed to save settings to localStorage:', error);
+      console.warn('Failed to save settings to localStorage:', error);
     }
   }, [tier, selectedModel]);
-
 
   const {
     prompt,
@@ -101,7 +106,7 @@ const App: React.FC = () => {
   } = useAppGenerator({
     selectedTier,
     selectedModel,
-    setSelectedModel
+    setSelectedModel,
   });
 
   useEffect(() => {
@@ -109,21 +114,21 @@ const App: React.FC = () => {
     const targetSequence = ['`', '`', '`'];
 
     const handleKeyDown = (e: KeyboardEvent) => {
-        keySequence.push(e.key);
-        if (keySequence.length > targetSequence.length) {
-            keySequence.shift();
-        }
+      keySequence.push(e.key);
+      if (keySequence.length > targetSequence.length) {
+        keySequence.shift();
+      }
 
-        if (JSON.stringify(keySequence) === JSON.stringify(targetSequence)) {
-            setIsDevPanelOpen(prev => !prev);
-            keySequence = [];
-        }
+      if (JSON.stringify(keySequence) === JSON.stringify(targetSequence)) {
+        setIsDevPanelOpen((prev) => !prev);
+        keySequence = [];
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-        window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
@@ -137,7 +142,7 @@ const App: React.FC = () => {
   const startTour = useCallback(() => {
     setIsTourOpen(true);
   }, []);
-  
+
   const openUpgradeModal = useCallback(() => {
     if (!flags.ff_payments) {
       console.warn('Attempted to open upgrade modal while ff_payments is disabled.');
@@ -149,7 +154,7 @@ const App: React.FC = () => {
   const openPrivacyModal = useCallback(() => {
     setIsPrivacyModalOpen(true);
   }, []);
-  
+
   const openOrchestrationScreen = useCallback(() => {
     setIsOrchestrationScreen(true);
   }, []);
@@ -170,7 +175,9 @@ const App: React.FC = () => {
     setSelectedAgent(null);
   };
 
-  const referralLink = user ? `${window.location.origin}?ref=${user.uid}` : `${window.location.origin}?ref=12345`;
+  const referralLink = user
+    ? `${window.location.origin}?ref=${user.uid}`
+    : `${window.location.origin}?ref=12345`;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -180,13 +187,14 @@ const App: React.FC = () => {
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  
-  const isGenerating = generationState !== GenerationState.IDLE && generationState !== GenerationState.COMPLETED;
+
+  const isGenerating =
+    generationState !== GenerationState.IDLE && generationState !== GenerationState.COMPLETED;
 
   const handleModalUpgrade = () => {
     handleUpgrade('forge');
     setIsUpgradeModalOpen(false);
-  }
+  };
 
   const handleOrchestrationUpgrade = (tierId: TierId) => {
     // This would trigger a Stripe checkout flow
@@ -200,17 +208,23 @@ const App: React.FC = () => {
       <Notification notification={notification} onClose={dismissNotification} />
       <FuturisticSphere />
       <div className="relative z-10">
-        <Header 
+        <Header
           flags={flags}
-          onStartTour={startTour} 
-          onUpgrade={openUpgradeModal} 
+          onStartTour={startTour}
+          onUpgrade={openUpgradeModal}
           onOpenOrchestration={openOrchestrationScreen}
           onOpenReferrals={openReferralsModal}
           onOpenProfile={openUserProfile}
         />
         <main className="px-4">
-          <Hero onStartTour={startTour} onUpgrade={openUpgradeModal} isGenerating={isGenerating} flags={flags}>
-            {(generationState === GenerationState.IDLE || generationState === GenerationState.ENGINEERING_PROMPT) && (
+          <Hero
+            onStartTour={startTour}
+            onUpgrade={openUpgradeModal}
+            isGenerating={isGenerating}
+            flags={flags}
+          >
+            {(generationState === GenerationState.IDLE ||
+              generationState === GenerationState.ENGINEERING_PROMPT) && (
               <PromptInput
                 flags={flags}
                 prompt={prompt}
@@ -229,10 +243,10 @@ const App: React.FC = () => {
                 setStack={setStack}
               />
             )}
-             {generationState === GenerationState.ENGINEERING_PROMPT && (
+            {generationState === GenerationState.ENGINEERING_PROMPT && (
               <div className="w-full mt-12">
-                <PromptEngineer 
-                  originalPrompt={prompt} 
+                <PromptEngineer
+                  originalPrompt={prompt}
                   engineeredPrompt={engineeredPrompt}
                   onProceed={proceedToBuild}
                 />
@@ -241,11 +255,13 @@ const App: React.FC = () => {
           </Hero>
 
           <div className="w-full max-w-5xl mx-auto flex flex-col items-center gap-12">
-            {(generationState === GenerationState.RUNNING || generationState === GenerationState.ERROR || generationState === GenerationState.PARTIAL_COMPLETED) && (
+            {(generationState === GenerationState.RUNNING ||
+              generationState === GenerationState.ERROR ||
+              generationState === GenerationState.PARTIAL_COMPLETED) && (
               <>
                 <ProgressBar progress={progress} agentStatuses={agentStatuses} />
-                <AgentPipeline 
-                  agentStatuses={agentStatuses} 
+                <AgentPipeline
+                  agentStatuses={agentStatuses}
                   commitHistory={commitHistory}
                   generationState={generationState}
                   onReset={handleReset}
@@ -254,20 +270,22 @@ const App: React.FC = () => {
               </>
             )}
 
-            {(generationState === GenerationState.COMPLETED || generationState === GenerationState.PARTIAL_COMPLETED) && results && (
-              <ResultsDisplay
-                flags={flags}
-                generationState={generationState}
-                results={results}
-                onReset={handleReset}
-                onUpgrade={openUpgradeModal}
-                scaffoldedProject={scaffoldedProject}
-                selectedTier={selectedTier}
-                buildId={buildId}
-              />
-            )}
+            {(generationState === GenerationState.COMPLETED ||
+              generationState === GenerationState.PARTIAL_COMPLETED) &&
+              results && (
+                <ResultsDisplay
+                  flags={flags}
+                  generationState={generationState}
+                  results={results}
+                  onReset={handleReset}
+                  onUpgrade={openUpgradeModal}
+                  scaffoldedProject={scaffoldedProject}
+                  selectedTier={selectedTier}
+                  buildId={buildId}
+                />
+              )}
           </div>
-          
+
           <Suspense fallback={<Loader />}>
             <Features />
             <FAQ />
@@ -332,6 +350,39 @@ const App: React.FC = () => {
           <ChatWidget />
         </Suspense>
       )}
+      <Tour isOpen={isTourOpen} onClose={() => setIsTourOpen(false)} />
+      {flags.ff_payments && (
+        <UpgradeModal
+          isOpen={isUpgradeModalOpen}
+          onClose={() => setIsUpgradeModalOpen(false)}
+          onUpgrade={handleModalUpgrade}
+        />
+      )}
+      <PrivacyPolicyModal
+        isOpen={isPrivacyModalOpen}
+        onClose={() => setIsPrivacyModalOpen(false)}
+      />
+      {flags.ff_beta_dashboard && (
+        <OrchestrationScreen
+          isOpen={isOrchestrationScreenOpen}
+          onClose={() => setIsOrchestrationScreen(false)}
+          onUpgrade={handleOrchestrationUpgrade}
+          currentTierId={selectedTier}
+          flags={flags}
+        />
+      )}
+      <ReferralsModal
+        isOpen={isReferralsModalOpen}
+        onClose={() => setIsReferralsModalOpen(false)}
+        referralLink={referralLink}
+      />
+      <AgentDetailModal
+        isOpen={!!selectedAgent}
+        onClose={handleCloseAgentModal}
+        agent={selectedAgent}
+      />
+      <UserProfileModal isOpen={isUserProfileOpen} onClose={() => setIsUserProfileOpen(false)} />
+      {flags.ff_ai_features && <ChatWidget />}
       <CookieConsent onOpenPrivacyPolicy={openPrivacyModal} />
     </div>
   );
