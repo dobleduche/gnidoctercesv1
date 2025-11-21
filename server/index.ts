@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import { randomUUID } from 'crypto';
 import { buildQueue, initBuildWorker } from './queue.js';
 import { BuildRequest, BuildResult } from './orchestrator.js';
@@ -10,12 +12,52 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
+// Security middleware
+app.use(
+  helmet({
+    contentSecurityPolicy: isDevelopment
+      ? {
+          directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", 'data:', 'https:'],
+            connectSrc: ["'self'", 'http://localhost:*', 'ws://localhost:*'],
+          },
+        }
+      : undefined,
+  })
+);
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: isDevelopment ? 1000 : 100, // limit each IP
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use('/api', limiter);
+
+// CORS configuration
+const corsOptions = {
+  origin: isDevelopment
+    ? ['http://localhost:5173', 'http://localhost:3000']
+    : process.env.APP_BASE_URL?.split(',') || [],
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+
 
 // Respect upstream proxy headers so rate limiting and logging use client IPs.
 app.set('trust proxy', true);
 app.use(cors());
 app.use(express.json());
 app.use(redisRateLimiter);
+main
 
 // In-memory store for demo; you can swap this with Redis/Postgres later.
 const buildResults = new Map<string, BuildResult>();
@@ -33,7 +75,7 @@ app.get('/api/key-status', (_req, res) => {
   res.json({
     gemini: !!process.env.GEMINI_API_KEY,
     openai: !!process.env.OPENAI_API_KEY,
-    anthropic: !!process.env.ANTHROPIC_API_KEY
+    anthropic: !!process.env.ANTHROPIC_API_KEY,
   });
 });
 
@@ -55,17 +97,17 @@ app.post('/api/builds', async (req, res) => {
     description,
     features: Array.isArray(features) ? features : [],
     includeAuth: !!includeAuth,
-    includeBilling: !!includeBilling
+    includeBilling: !!includeBilling,
   };
 
   await buildQueue.add('build', buildReq, {
     removeOnComplete: true,
-    removeOnFail: false
+    removeOnFail: false,
   });
 
   res.status(202).json({
     buildId: id,
-    status: 'queued'
+    status: 'queued',
   });
 });
 
@@ -122,10 +164,24 @@ import IORedis from 'ioredis';
 const connection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379');
 const events = new QueueEvents('buildQueue', { connection });
 
+// Type guard to validate BuildResult structure
+function isBuildResult(value: unknown): value is BuildResult {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'buildId' in value &&
+    'files' in value &&
+    typeof (value as BuildResult).buildId === 'string'
+  );
+}
+
 events.on('completed', async ({ jobId, returnvalue }) => {
-  const result = returnvalue as BuildResult;
-  buildResults.set(result.buildId, result);
-  console.log(`📦 Build ${result.buildId} stored in memory from job ${jobId}`);
+  if (isBuildResult(returnvalue)) {
+    buildResults.set(returnvalue.buildId, returnvalue);
+    console.log(`📦 Build ${returnvalue.buildId} stored in memory from job ${jobId}`);
+  } else {
+    console.error(`⚠️ Invalid build result received for job ${jobId}`);
+  }
 });
 
 // Start server

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { LogoIcon } from './icons/LogoIcon';
 import UpgradeButton from './UpgradeButton';
@@ -20,7 +19,14 @@ interface HeaderProps {
   flags: FeatureFlags;
 }
 
-const Header: React.FC<HeaderProps> = ({ onStartTour, onUpgrade, onOpenOrchestration, onOpenReferrals, onOpenProfile, flags }) => {
+const Header: React.FC<HeaderProps> = ({
+  onStartTour,
+  onUpgrade,
+  onOpenOrchestration,
+  onOpenReferrals,
+  onOpenProfile,
+  flags,
+}) => {
   const [theme, toggleTheme] = useDarkMode();
   const { user, loading: userLoading } = useUserStore();
 
@@ -37,25 +43,57 @@ const Header: React.FC<HeaderProps> = ({ onStartTour, onUpgrade, onOpenOrchestra
       <a href="#" className="flex items-center gap-3" aria-label="gnidoC terceS Homepage">
         <LogoIcon className="h-8 w-8" aria-hidden="true" />
         <span className="font-orbitron font-bold text-lg uppercase">
-           <span className="bg-gradient-to-r from-magenta to-cyan text-transparent bg-clip-text">gnidoC</span> terceS
+          <span className="bg-gradient-to-r from-magenta to-cyan text-transparent bg-clip-text">
+            gnidoC
+          </span>{' '}
+          terceS
         </span>
       </a>
       <nav className="hidden md:flex items-center gap-6 text-sm">
-        <a href="#features" onClick={(e) => handleNavClick(e, 'features')} className="text-gray-600 dark:text-gray-300 hover:text-cyan transition-colors duration-300">Features</a>
+        <a
+          href="#features"
+          onClick={(e) => handleNavClick(e, 'features')}
+          className="text-gray-600 dark:text-gray-300 hover:text-cyan transition-colors duration-300"
+        >
+          Features
+        </a>
         {flags.ff_beta_dashboard && (
-          <button onClick={onOpenOrchestration} className="text-gray-600 dark:text-gray-300 hover:text-cyan transition-colors duration-300">Orchestration</button>
+          <button
+            onClick={onOpenOrchestration}
+            className="text-gray-600 dark:text-gray-300 hover:text-cyan transition-colors duration-300"
+          >
+            Orchestration
+          </button>
         )}
-        <a href="#faq" onClick={(e) => handleNavClick(e, 'faq')} className="text-gray-600 dark:text-gray-300 hover:text-cyan transition-colors duration-300">FAQ</a>
-        <a href="https://docs.gnidoc.xyz" target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-gray-300 hover:text-cyan transition-colors duration-300">Docs</a>
-        <button onClick={onStartTour} className="text-gray-600 dark:text-gray-300 hover:text-cyan transition-colors duration-300">Start Tour</button>
+        <a
+          href="#faq"
+          onClick={(e) => handleNavClick(e, 'faq')}
+          className="text-gray-600 dark:text-gray-300 hover:text-cyan transition-colors duration-300"
+        >
+          FAQ
+        </a>
+        <a
+          href="https://docs.gnidoc.xyz"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-gray-600 dark:text-gray-300 hover:text-cyan transition-colors duration-300"
+        >
+          Docs
+        </a>
+        <button
+          onClick={onStartTour}
+          className="text-gray-600 dark:text-gray-300 hover:text-cyan transition-colors duration-300"
+        >
+          Start Tour
+        </button>
       </nav>
       <div className="flex items-center gap-4">
-        <button 
-          onClick={toggleTheme} 
+        <button
+          onClick={toggleTheme}
           className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:text-cyan hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
           aria-label="Toggle theme"
         >
-            {theme === 'dark' ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
+          {theme === 'dark' ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
         </button>
         <button
           onClick={onOpenReferrals}

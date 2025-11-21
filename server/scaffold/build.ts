@@ -280,13 +280,13 @@ export default {
   },
   plugins: [],
 }`,
- 'client/postcss.config.js': `export default {
+  'client/postcss.config.js': `export default {
   plugins: {
     tailwindcss: {},
     autoprefixer: {},
   },
 }`,
- 'ci.yml': `name: CI/CD Pipeline
+  'ci.yml': `name: CI/CD Pipeline
 
 on:
   push:
@@ -344,56 +344,83 @@ jobs:
         echo "#     vercel-token: \${{ secrets.VERCEL_TOKEN }}"
         echo "#     vercel-org-id: \${{ secrets.VERCEL_ORG_ID }}"
         echo "#     vercel-project-id: \${{ secrets.VERCEL_PROJECT_ID }}"
-`
+`,
 };
 
+export async function buildProject(
+  engineered: RefinedPrompt
+): Promise<{ projectId: string; projectDir: string }> {
+  const projectId = generateProjectId();
+  const projectDir = path.join(process.cwd(), 'generated', projectId);
 
-export async function buildProject(engineered: RefinedPrompt): Promise<{ projectId: string, projectDir: string }> {
-    const projectId = generateProjectId();
-    const projectDir = path.join(process.cwd(), 'generated', projectId);
+  await fs.mkdir(projectDir, { recursive: true });
 
-    await fs.mkdir(projectDir, { recursive: true });
+  const appName =
+    engineered.goals[0]
+      ?.split(' ')
+      .slice(0, 3)
+      .join('-')
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, '') || 'my-awesome-app';
 
-    const appName = engineered.goals[0]?.split(' ').slice(0, 3).join('-').toLowerCase().replace(/[^a-z0-9-]/g, '') || 'my-awesome-app';
+  // Create server files
+  await fs.mkdir(path.join(projectDir, 'server'), { recursive: true });
+  await fs.writeFile(path.join(projectDir, 'package.json'), fileTemplates['package.json'](appName));
+  await fs.writeFile(path.join(projectDir, '.env.sample'), fileTemplates['.env.sample']);
+  await fs.writeFile(path.join(projectDir, '.gitignore'), fileTemplates['.gitignore']);
+  await fs.writeFile(path.join(projectDir, 'server/index.js'), fileTemplates['server/index.js']);
 
-    // Create server files
-    await fs.mkdir(path.join(projectDir, 'server'), { recursive: true });
-    await fs.writeFile(path.join(projectDir, 'package.json'), fileTemplates['package.json'](appName));
-    await fs.writeFile(path.join(projectDir, '.env.sample'), fileTemplates['.env.sample']);
-    await fs.writeFile(path.join(projectDir, '.gitignore'), fileTemplates['.gitignore']);
-    await fs.writeFile(path.join(projectDir, 'server/index.js'), fileTemplates['server/index.js']);
+  // Create client files
+  const clientDir = path.join(projectDir, 'client');
+  const clientSrcDir = path.join(clientDir, 'src');
+  await fs.mkdir(clientSrcDir, { recursive: true });
+  await fs.writeFile(
+    path.join(clientDir, 'package.json'),
+    fileTemplates['client/package.json'](appName)
+  );
+  await fs.writeFile(
+    path.join(clientDir, 'vite.config.ts'),
+    fileTemplates['client/vite.config.ts']
+  );
+  await fs.writeFile(
+    path.join(clientDir, 'index.html'),
+    fileTemplates['client/index.html'](appName)
+  );
+  await fs.writeFile(
+    path.join(clientDir, 'tailwind.config.js'),
+    fileTemplates['client/tailwind.config.js']
+  );
+  await fs.writeFile(
+    path.join(clientDir, 'postcss.config.js'),
+    fileTemplates['client/postcss.config.js']
+  );
+  await fs.writeFile(path.join(clientSrcDir, 'main.tsx'), fileTemplates['client/main.tsx']);
+  await fs.writeFile(
+    path.join(clientSrcDir, 'App.tsx'),
+    fileTemplates['client/src/App.tsx'](engineered.final_prompt)
+  );
+  await fs.writeFile(path.join(clientSrcDir, 'index.css'), fileTemplates['client/src/index.css']);
 
-    // Create client files
-    const clientDir = path.join(projectDir, 'client');
-    const clientSrcDir = path.join(clientDir, 'src');
-    await fs.mkdir(clientSrcDir, { recursive: true });
-    await fs.writeFile(path.join(clientDir, 'package.json'), fileTemplates['client/package.json'](appName));
-    await fs.writeFile(path.join(clientDir, 'vite.config.ts'), fileTemplates['client/vite.config.ts']);
-    await fs.writeFile(path.join(clientDir, 'index.html'), fileTemplates['client/index.html'](appName));
-    await fs.writeFile(path.join(clientDir, 'tailwind.config.js'), fileTemplates['client/tailwind.config.js']);
-    await fs.writeFile(path.join(clientDir, 'postcss.config.js'), fileTemplates['client/postcss.config.js']);
-    await fs.writeFile(path.join(clientSrcDir, 'main.tsx'), fileTemplates['client/main.tsx']);
-    await fs.writeFile(path.join(clientSrcDir, 'App.tsx'), fileTemplates['client/src/App.tsx'](engineered.final_prompt));
-    await fs.writeFile(path.join(clientSrcDir, 'index.css'), fileTemplates['client/src/index.css']);
-    
-    // Create GitHub Actions workflow
-    const workflowsDir = path.join(projectDir, '.github', 'workflows');
-    await fs.mkdir(workflowsDir, { recursive: true });
-    await fs.writeFile(path.join(workflowsDir, 'ci.yml'), fileTemplates['ci.yml']);
-    
-    try {
-        console.log(`[${projectId}] Installing dependencies (this may take a few minutes)...`);
-        await execPromise('npm install', { cwd: projectDir });
-        await execPromise('npm install', { cwd: clientDir });
+  // Create GitHub Actions workflow
+  const workflowsDir = path.join(projectDir, '.github', 'workflows');
+  await fs.mkdir(workflowsDir, { recursive: true });
+  await fs.writeFile(path.join(workflowsDir, 'ci.yml'), fileTemplates['ci.yml']);
 
-        console.log(`[${projectId}] Building client application...`);
-        await execPromise('npm run build', { cwd: clientDir });
-        console.log(`[${projectId}] Client build complete.`);
-    } catch (error) {
-        console.error(`[${projectId}] Project build failed:`, error);
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        throw new Error(`Project build failed. Please check server logs for project ID ${projectId}. Details: ${errorMessage}`);
-    }
+  try {
+    console.log(`[${projectId}] Installing dependencies (this may take a few minutes)...`);
+    await execPromise('npm install', { cwd: projectDir });
+    await execPromise('npm install', { cwd: clientDir });
 
-    return { projectId, projectDir: `/generated/${projectId}` };
+    console.log(`[${projectId}] Building client application...`);
+    await execPromise('npm run build', { cwd: clientDir });
+    console.log(`[${projectId}] Client build complete.`);
+  } catch (error) {
+    console.error(`[${projectId}] Project build failed:`, error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new Error(
+      `Project build failed. Please check server logs for project ID ${projectId}. Details: ${errorMessage}`
+    );
+  }
+
+  return { projectId, projectDir: `/generated/${projectId}` };
 }

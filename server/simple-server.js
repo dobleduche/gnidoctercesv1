@@ -21,7 +21,7 @@ app.get('/api/models', (req, res) => {
     { id: 'claude-3-sonnet', name: 'Claude 3 Sonnet', provider: 'anthropic' },
     { id: 'deepseek-coder', name: 'DeepSeek Coder', provider: 'deepseek' },
     { id: 'gpt-4', name: 'GPT-4', provider: 'openai' },
-    { id: 'grok-beta', name: 'Grok Beta', provider: 'xai' }
+    { id: 'grok-beta', name: 'Grok Beta', provider: 'xai' },
   ]);
 });
 
@@ -31,7 +31,7 @@ app.get('/api/key-status', (req, res) => {
     anthropic: !!process.env.ANTHROPIC_API_KEY,
     deepseek: !!process.env.DEEPSEEK_API_KEY,
     openai: !!process.env.OPENAI_API_KEY,
-    xai: !!process.env.XAI_API_KEY
+    xai: !!process.env.XAI_API_KEY,
   });
 });
 
@@ -41,20 +41,20 @@ app.get('/api/ai/key-status', (req, res) => {
     anthropic: !!process.env.ANTHROPIC_API_KEY,
     deepseek: !!process.env.DEEPSEEK_API_KEY,
     openai: !!process.env.OPENAI_API_KEY,
-    xai: !!process.env.XAI_API_KEY
+    xai: !!process.env.XAI_API_KEY,
   });
 });
 
 app.post('/api/proxy/anthropic', (req, res) => {
-  res.json({ message: "Anthropic API proxy working!" });
+  res.json({ message: 'Anthropic API proxy working!' });
 });
 
 app.get('/api/ai/list-gemini-models', (req, res) => {
   res.json({
     models: [
-      { name: "gemini-pro", description: "Gemini Pro" },
-      { name: "gemini-pro-vision", description: "Gemini Pro Vision" }
-    ]
+      { name: 'gemini-pro', description: 'Gemini Pro' },
+      { name: 'gemini-pro-vision', description: 'Gemini Pro Vision' },
+    ],
   });
 });
 

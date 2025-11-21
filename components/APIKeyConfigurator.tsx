@@ -39,14 +39,16 @@ const APIKeyConfigurator: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await safeFetch<{ ok: boolean; status: KeyStatus; error?: string }>('/api/ai/key-status');
+      const data = await safeFetch<{ ok: boolean; status: KeyStatus; error?: string }>(
+        '/api/ai/key-status'
+      );
       if (!data.ok) {
         throw new Error(data.error || 'Failed to fetch key status.');
       }
       setStatus(data.status);
     } catch (err) {
-      console.error("API Key status fetch failed:", err);
-      setError(err instanceof Error ? err.message : "An unknown error occurred.");
+      console.error('API Key status fetch failed:', err);
+      setError(err instanceof Error ? err.message : 'An unknown error occurred.');
     } finally {
       setIsLoading(false);
     }
@@ -57,7 +59,7 @@ const APIKeyConfigurator: React.FC = () => {
   }, [fetchStatus]);
 
   const toggleReveal = (key: string) => {
-    setRevealedKeys(prev => ({ ...prev, [key]: !prev[key] }));
+    setRevealedKeys((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   const renderContent = () => {
@@ -101,7 +103,9 @@ const APIKeyConfigurator: React.FC = () => {
                 Multi-Model AI Orchestration System
               </p>
               <p className="text-xs text-gray-400 mt-1">
-                Configure API keys as environment variables in your <code className="bg-gray-700 px-1.5 py-0.5 rounded text-xs">.env</code> file. Keys are securely stored on the server and never exposed to the frontend.
+                Configure API keys as environment variables in your{' '}
+                <code className="bg-gray-700 px-1.5 py-0.5 rounded text-xs">.env</code> file. Keys
+                are securely stored on the server and never exposed to the frontend.
               </p>
             </div>
           </div>
@@ -112,11 +116,11 @@ const APIKeyConfigurator: React.FC = () => {
               const isConfigured = status[key as keyof KeyStatus];
               const isRevealed = revealedKeys[key];
               return (
-                <div 
-                  key={key} 
+                <div
+                  key={key}
                   className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
-                    isConfigured 
-                      ? 'bg-green-500/10 border-green-500/30 hover:bg-green-500/15' 
+                    isConfigured
+                      ? 'bg-green-500/10 border-green-500/30 hover:bg-green-500/15'
                       : 'bg-yellow-500/10 border-yellow-500/30 hover:bg-yellow-500/15'
                   }`}
                 >
@@ -128,22 +132,32 @@ const APIKeyConfigurator: React.FC = () => {
                         <p className="text-xs font-mono text-gray-400">
                           {isRevealed ? info.envVar : '●'.repeat(info.envVar.length)}
                         </p>
-                        <button 
-                          onClick={() => toggleReveal(key)} 
+                        <button
+                          onClick={() => toggleReveal(key)}
                           className="text-gray-500 hover:text-gray-300 transition-colors"
                           aria-label={`Toggle visibility of ${info.name} variable name`}
                         >
-                          {isRevealed ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                          {isRevealed ? (
+                            <EyeOffIcon className="h-4 w-4" />
+                          ) : (
+                            <EyeIcon className="h-4 w-4" />
+                          )}
                         </button>
                       </div>
                     </div>
                   </div>
-                  <div className={`flex items-center gap-2 px-2.5 py-1 text-xs font-bold rounded-full ${
-                    isConfigured 
-                      ? 'bg-green-500/20 text-green-300' 
-                      : 'bg-yellow-500/20 text-yellow-300'
-                  }`}>
-                    {isConfigured ? <CheckIcon className="h-3 w-3" /> : <ErrorIcon className="h-3 w-3" />}
+                  <div
+                    className={`flex items-center gap-2 px-2.5 py-1 text-xs font-bold rounded-full ${
+                      isConfigured
+                        ? 'bg-green-500/20 text-green-300'
+                        : 'bg-yellow-500/20 text-yellow-300'
+                    }`}
+                  >
+                    {isConfigured ? (
+                      <CheckIcon className="h-3 w-3" />
+                    ) : (
+                      <ErrorIcon className="h-3 w-3" />
+                    )}
                     <span>{isConfigured ? 'Configured' : 'Not Configured'}</span>
                   </div>
                 </div>

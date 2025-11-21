@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { User, TierId, Activity } from '../types';
 
@@ -20,23 +19,26 @@ export const useUserStore = create<UserState>((set) => ({
   credits: null,
   loading: false, // Start with false, so login button shows immediately
   recentActivity: [],
-  setUser: (user, activity) => set(state => ({ 
-      user, 
+  setUser: (user, activity) =>
+    set((state) => ({
+      user,
       tier: user?.tier ?? null,
       credits: user?.credits ?? null,
-      recentActivity: activity
-  })),
-  clearUser: () => set({ 
-    user: null, 
-    tier: null, 
-    credits: null,
-    recentActivity: [] 
-  }),
+      recentActivity: activity,
+    })),
+  clearUser: () =>
+    set({
+      user: null,
+      tier: null,
+      credits: null,
+      recentActivity: [],
+    }),
   setLoading: (loading) => set({ loading }),
-  addActivity: (activity) => set((state) => ({
-    recentActivity: [
-      { ...activity, id: `act_${Date.now()}`, timestamp: new Date().toISOString() },
-      ...state.recentActivity,
-    ].slice(0, 5), // Keep last 5 activities
-  })),
+  addActivity: (activity) =>
+    set((state) => ({
+      recentActivity: [
+        { ...activity, id: `act_${Date.now()}`, timestamp: new Date().toISOString() },
+        ...state.recentActivity,
+      ].slice(0, 5), // Keep last 5 activities
+    })),
 }));

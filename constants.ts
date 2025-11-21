@@ -19,25 +19,26 @@ import { AnthropicIcon } from './components/icons/AnthropicIcon';
 import { DeepseekIcon } from './components/icons/DeepseekIcon';
 import { XAIIcon } from './components/icons/XAIIcon';
 
-
 export const AGENT_DEFINITIONS: Agent[] = [
   {
     id: 'prompt-engineer',
     name: 'Prompt Engineer',
-    description: 'Analyzes and refines the user\'s prompt into a detailed technical specification for the build agents.',
+    description:
+      "Analyzes and refines the user's prompt into a detailed technical specification for the build agents.",
     avatar: PromptEngineerIcon,
   },
   {
     id: 'ui-agent',
     name: 'UI Agent',
-    description: 'Generates a comprehensive, type-safe UI kit with Buttons, Inputs, Cards, and Modals based on the cyber-neon design system.',
+    description:
+      'Generates a comprehensive, type-safe UI kit with Buttons, Inputs, Cards, and Modals based on the cyber-neon design system.',
     avatar: UIAgentIcon,
     subtasks: [
-        { name: 'Design System Tokens' },
-        { name: 'Layout & Grid Setup' },
-        { name: 'Core Component Library' },
-        { name: 'State Management Hooks' },
-        { name: 'Accessibility Pass' },
+      { name: 'Design System Tokens' },
+      { name: 'Layout & Grid Setup' },
+      { name: 'Core Component Library' },
+      { name: 'State Management Hooks' },
+      { name: 'Accessibility Pass' },
     ],
   },
   {
@@ -46,10 +47,10 @@ export const AGENT_DEFINITIONS: Agent[] = [
     description: 'Constructs database schema, migrations, and seed data for Supabase.',
     avatar: DBAgentIcon,
     subtasks: [
-        { name: 'Schema Definition' },
-        { name: 'Migration Generation' },
-        { name: 'Seed Data Scripting' },
-        { name: 'Row-Level Security Policies' },
+      { name: 'Schema Definition' },
+      { name: 'Migration Generation' },
+      { name: 'Seed Data Scripting' },
+      { name: 'Row-Level Security Policies' },
     ],
   },
   {
@@ -58,16 +59,17 @@ export const AGENT_DEFINITIONS: Agent[] = [
     description: 'Builds API endpoints, business logic, and authentication flows.',
     avatar: BackendAgentIcon,
     subtasks: [
-        { name: 'API Router Setup' },
-        { name: 'CRUD Endpoints' },
-        { name: 'Business Logic' },
-        { name: 'Error Handling Middleware' },
+      { name: 'API Router Setup' },
+      { name: 'CRUD Endpoints' },
+      { name: 'Business Logic' },
+      { name: 'Error Handling Middleware' },
     ],
   },
   {
     id: 'doc-agent',
     name: 'Documentation Agent',
-    description: 'Generates OpenAPI (Swagger) specifications and Markdown documentation for all backend endpoints.',
+    description:
+      'Generates OpenAPI (Swagger) specifications and Markdown documentation for all backend endpoints.',
     avatar: DocumentationAgentIcon,
   },
   {
@@ -76,9 +78,9 @@ export const AGENT_DEFINITIONS: Agent[] = [
     description: 'Implements user sign-up, login, and session management with OAuth providers.',
     avatar: AuthAgentIcon,
     subtasks: [
-        { name: 'JWT Strategy' },
-        { name: 'OAuth Provider Setup' },
-        { name: 'Protected Route Guard' },
+      { name: 'JWT Strategy' },
+      { name: 'OAuth Provider Setup' },
+      { name: 'Protected Route Guard' },
     ],
   },
   {
@@ -120,7 +122,8 @@ export const AGENT_DEFINITIONS: Agent[] = [
   {
     id: 'code-review-agent',
     name: 'Code Review Agent',
-    description: 'Performs a final automated code review for quality, consistency, and best practices.',
+    description:
+      'Performs a final automated code review for quality, consistency, and best practices.',
     avatar: CodeReviewAgentIcon,
   },
 ];
@@ -138,12 +141,13 @@ export const AGENT_ERROR_MESSAGES: Record<string, string> = {
   'code-review-agent': 'Code quality score below threshold (75%).',
 };
 
-export const MODEL_INFO: Record<AIModel, { name: string; Icon: React.FC<{className?: string}> }> = {
-  gemini: { name: 'Gemini', Icon: GeminiIcon },
-  openai: { name: 'OpenAI', Icon: OpenAIIcon },
-  anthropic: { name: 'Anthropic', Icon: AnthropicIcon },
-  deepseek: { name: 'DeepSeek', Icon: DeepseekIcon },
-  xai: { name: 'xAI Grok', Icon: XAIIcon },
-  // FIX: Added missing 'grok' model to satisfy the Record type.
-  grok: { name: 'Grok', Icon: XAIIcon },
-};
+export const MODEL_INFO: Record<AIModel, { name: string; Icon: React.FC<{ className?: string }> }> =
+  {
+    gemini: { name: 'Gemini', Icon: GeminiIcon },
+    openai: { name: 'OpenAI', Icon: OpenAIIcon },
+    anthropic: { name: 'Anthropic', Icon: AnthropicIcon },
+    deepseek: { name: 'DeepSeek', Icon: DeepseekIcon },
+    xai: { name: 'xAI Grok', Icon: XAIIcon },
+    // FIX: Added missing 'grok' model to satisfy the Record type.
+    grok: { name: 'Grok', Icon: XAIIcon },
+  };

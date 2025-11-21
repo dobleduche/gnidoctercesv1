@@ -1,4 +1,4 @@
-name: CI & Sync to AI Studio
+name: CI/CD Pipeline
 
 on:
   push:
@@ -8,10 +8,18 @@ on:
     branches:
       - main
 
+env:
+  NODE_VERSION: '20'
+
+permissions:
+  contents: read
+
 jobs:
-  lint-and-test:
-    name: Lint and Test
+  lint-test-build:
+    name: Lint, Test & Build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout code
@@ -20,36 +28,77 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
 
-      - name: Install root dependencies
-        run: npm install
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Install client dependencies
-        run: npm install --prefix client
+      - name: Run linter
+        run: npm run lint
+        continue-on-error: true
 
-      - name: Run linter (placeholder)
-        run: echo "Linting step: No linter configured. Add a 'lint' script to your package.json files."
+      - name: Check formatting
+        run: npm run format:check
+        continue-on-error: true
 
-      - name: Run tests (placeholder)
-        run: echo "Testing step: No tests configured. Add a 'test' script to your package.json files."
+      - name: Run tests
+        run: npm run test
 
-  sync-to-aistudio:
-    name: Sync to AI Studio
+      - name: Build application
+        run: npm run build
+
+      - name: Upload build artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: dist/
+          retention-days: 7
+
+  docker-build:
+    name: Build Docker Image
     runs-on: ubuntu-latest
-    # This job only runs on a push to the main branch, after lint-and-test succeeds
-    needs: lint-and-test
+    needs: lint-test-build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Simulate Git Pull for AI Studio Sync
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: gnidoc-terces:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # Deployment job template - customize for your platform
+  deploy:
+    name: Deploy (Template)
+    runs-on: ubuntu-latest
+    needs: docker-build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Deployment placeholder
         run: |
-          echo "Simulating a 'git pull' to sync changes to AI Studio."
-          echo "In a real-world scenario, this step would use a specific action or API call to trigger a sync in the AI Studio environment."
-          # This is a conceptual representation of the user's request.
-          # The actual implementation would depend on the capabilities of the AI Studio platform.
+          echo "🚀 Deployment step"
+          echo "Configure this job for your deployment platform:"
+          echo "  - Render: Use render.yaml"
+          echo "  - Vercel: Use vercel CLI"
+          echo "  - Fly.io: Use fly CLI"
+          echo "  - AWS: Use AWS CLI or CDK"
+          echo ""
+          echo "Required secrets to configure in GitHub:"
+          echo "  - DEPLOY_TOKEN or platform-specific credentials"
+          echo "  - Environment variables from .env.example"
