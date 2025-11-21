@@ -275,33 +275,63 @@ const App: React.FC = () => {
         </main>
         <Footer onOpenPrivacyPolicy={openPrivacyModal} isDevPanelOpen={isDevPanelOpen} />
       </div>
-      <Suspense fallback={null}>
-        {isTourOpen && <Tour isOpen={isTourOpen} onClose={() => setIsTourOpen(false)} />}
-        {flags.ff_payments && isUpgradeModalOpen && <UpgradeModal isOpen={isUpgradeModalOpen} onClose={() => setIsUpgradeModalOpen(false)} onUpgrade={handleModalUpgrade} />}
-        {isPrivacyModalOpen && <PrivacyPolicyModal isOpen={isPrivacyModalOpen} onClose={() => setIsPrivacyModalOpen(false)} />}
-        {flags.ff_beta_dashboard && isOrchestrationScreenOpen && <OrchestrationScreen 
-          isOpen={isOrchestrationScreenOpen} 
-          onClose={() => setIsOrchestrationScreen(false)} 
-          onUpgrade={handleOrchestrationUpgrade}
-          currentTierId={selectedTier}
-          flags={flags}
-        />}
-        {isReferralsModalOpen && <ReferralsModal 
-          isOpen={isReferralsModalOpen} 
-          onClose={() => setIsReferralsModalOpen(false)}
-          referralLink={referralLink}
-        />}
-        {selectedAgent && <AgentDetailModal 
-          isOpen={!!selectedAgent} 
-          onClose={handleCloseAgentModal} 
-          agent={selectedAgent} 
-        />}
-        {isUserProfileOpen && <UserProfileModal
-          isOpen={isUserProfileOpen}
-          onClose={() => setIsUserProfileOpen(false)}
-        />}
-        {flags.ff_ai_features && <ChatWidget />}
-      </Suspense>
+      {isTourOpen && (
+        <Suspense fallback={null}>
+          <Tour isOpen={isTourOpen} onClose={() => setIsTourOpen(false)} />
+        </Suspense>
+      )}
+      {flags.ff_payments && isUpgradeModalOpen && (
+        <Suspense fallback={null}>
+          <UpgradeModal isOpen={isUpgradeModalOpen} onClose={() => setIsUpgradeModalOpen(false)} onUpgrade={handleModalUpgrade} />
+        </Suspense>
+      )}
+      {isPrivacyModalOpen && (
+        <Suspense fallback={null}>
+          <PrivacyPolicyModal isOpen={isPrivacyModalOpen} onClose={() => setIsPrivacyModalOpen(false)} />
+        </Suspense>
+      )}
+      {flags.ff_beta_dashboard && isOrchestrationScreenOpen && (
+        <Suspense fallback={null}>
+          <OrchestrationScreen 
+            isOpen={isOrchestrationScreenOpen} 
+            onClose={() => setIsOrchestrationScreen(false)} 
+            onUpgrade={handleOrchestrationUpgrade}
+            currentTierId={selectedTier}
+            flags={flags}
+          />
+        </Suspense>
+      )}
+      {isReferralsModalOpen && (
+        <Suspense fallback={null}>
+          <ReferralsModal 
+            isOpen={isReferralsModalOpen} 
+            onClose={() => setIsReferralsModalOpen(false)}
+            referralLink={referralLink}
+          />
+        </Suspense>
+      )}
+      {selectedAgent && (
+        <Suspense fallback={null}>
+          <AgentDetailModal 
+            isOpen={!!selectedAgent} 
+            onClose={handleCloseAgentModal} 
+            agent={selectedAgent} 
+          />
+        </Suspense>
+      )}
+      {isUserProfileOpen && (
+        <Suspense fallback={null}>
+          <UserProfileModal
+            isOpen={isUserProfileOpen}
+            onClose={() => setIsUserProfileOpen(false)}
+          />
+        </Suspense>
+      )}
+      {flags.ff_ai_features && (
+        <Suspense fallback={null}>
+          <ChatWidget />
+        </Suspense>
+      )}
       <CookieConsent onOpenPrivacyPolicy={openPrivacyModal} />
     </div>
   );
