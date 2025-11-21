@@ -85,7 +85,7 @@ export class AIClients {
           return await this.gemini(req);
       }
     } catch (error) {
-      console.error(`[AI Provider Error - ${req.model}]`, error);
+      console.error("[AI Provider Error - %s", req.model, "]", error);
       // Re-throw the error to be handled by the calling route
       throw error;
     }
