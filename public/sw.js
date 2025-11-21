@@ -48,6 +48,24 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Validate origin - only cache same-origin requests for security
+  const requestUrl = new URL(request.url);
+  const isSameOrigin = requestUrl.origin === self.location.origin;
+  
+  // Skip caching for cross-origin requests (except for known CDNs)
+  const allowedOrigins = [
+    'https://cdn.tailwindcss.com',
+    'https://fonts.googleapis.com',
+    'https://fonts.gstatic.com',
+    'https://aistudiocdn.com'
+  ];
+  const isTrustedOrigin = allowedOrigins.some(origin => requestUrl.origin === origin);
+  
+  if (!isSameOrigin && !isTrustedOrigin) {
+    // Don't cache untrusted cross-origin requests
+    return;
+  }
+
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -68,8 +86,8 @@ self.addEventListener('fetch', (event) => {
 
       // Not in cache, fetch from network
       return fetch(request).then((networkResponse) => {
-        // Cache successful responses
-        if (networkResponse && networkResponse.status === 200) {
+        // Cache successful responses from trusted origins only
+        if (networkResponse && networkResponse.status === 200 && (isSameOrigin || isTrustedOrigin)) {
           // Clone the response
           const responseToCache = networkResponse.clone();
           

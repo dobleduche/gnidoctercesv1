@@ -52,9 +52,13 @@ export default defineConfig({
         assetFileNames: (assetInfo) => {
           const info = assetInfo.name?.split('.');
           const ext = info?.[info.length - 1];
-          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(ext || '')) {
+          // Guard: if no extension (no dot in filename), use default asset path
+          if (!ext || !assetInfo.name || !info || info.length < 2) {
+            return `assets/[name]-[hash][extname]`;
+          }
+          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(ext)) {
             return `assets/images/[name]-[hash][extname]`;
-          } else if (/woff2?|ttf|otf|eot/i.test(ext || '')) {
+          } else if (/woff2?|ttf|otf|eot/i.test(ext)) {
             return `assets/fonts/[name]-[hash][extname]`;
           }
           return `assets/[name]-[hash][extname]`;
