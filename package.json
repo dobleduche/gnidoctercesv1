@@ -37,7 +37,6 @@
     "@google/genai": "^1.29.1",
     "@stripe/stripe-js": "^8.4.0",
     "@supabase/supabase-js": "^2.49.1",
-    "@vitejs/plugin-react": "^5.1.0",
     "buffer": "^6.0.3",
     "bullmq": "^5.0.4",
     "child_process": "^1.0.2",
