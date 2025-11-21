@@ -23,7 +23,7 @@ interface AnthropicResponse {
     input_tokens: number;
     output_tokens: number;
   };
-  error?: { type: string, message: string };
+  error?: { type: string; message: string };
 }
 
 const AnthropicFetcher: React.FC = () => {
@@ -43,20 +43,19 @@ const AnthropicFetcher: React.FC = () => {
           'content-type': 'application/json',
         },
         body: JSON.stringify({
-          model: "claude-3-5-sonnet-20240620",
+          model: 'claude-3-5-sonnet-20240620',
           max_tokens: 1024,
           messages: [{ role: 'user', content: 'Tell me a short, futuristic joke about AI.' }],
         }),
       });
-      
-      setData(parsedData);
 
+      setData(parsedData);
     } catch (err) {
-      console.error("Anthropic fetch failed:", err);
+      console.error('Anthropic fetch failed:', err);
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("An unknown error occurred.");
+        setError('An unknown error occurred.');
       }
     } finally {
       setIsLoading(false);
@@ -105,23 +104,21 @@ const AnthropicFetcher: React.FC = () => {
 
     if (data && data.content && data.content.length > 0) {
       return (
-         <div className="p-6">
-            <h3 className="flex items-center gap-2 font-bold text-cyan mb-3">
-                <SparklesIcon className="h-5 w-5" />
-                Claude's Response:
-            </h3>
-            <div className="bg-dark-bg/50 p-4 rounded-lg border border-glass-border">
-                <p className="text-gray-300 whitespace-pre-wrap font-sans">
-                    {data.content[0].text}
-                </p>
-            </div>
-            <details className="mt-4 text-xs text-gray-500">
-                <summary className="cursor-pointer">View Raw Response</summary>
-                <pre className="mt-2 p-2 bg-dark-bg text-gray-400 rounded-md text-[10px] max-h-48 overflow-auto no-scrollbar">
-                    {JSON.stringify(data, null, 2)}
-                </pre>
-            </details>
-         </div>
+        <div className="p-6">
+          <h3 className="flex items-center gap-2 font-bold text-cyan mb-3">
+            <SparklesIcon className="h-5 w-5" />
+            Claude's Response:
+          </h3>
+          <div className="bg-dark-bg/50 p-4 rounded-lg border border-glass-border">
+            <p className="text-gray-300 whitespace-pre-wrap font-sans">{data.content[0].text}</p>
+          </div>
+          <details className="mt-4 text-xs text-gray-500">
+            <summary className="cursor-pointer">View Raw Response</summary>
+            <pre className="mt-2 p-2 bg-dark-bg text-gray-400 rounded-md text-[10px] max-h-48 overflow-auto no-scrollbar">
+              {JSON.stringify(data, null, 2)}
+            </pre>
+          </details>
+        </div>
       );
     }
 

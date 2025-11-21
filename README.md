@@ -40,6 +40,7 @@ Before you begin, ensure you have the following installed:
 - **Git**
 
 Optional but recommended:
+
 - **Docker** (for containerized deployment)
 - **Docker Compose** (for local Redis setup)
 
@@ -71,21 +72,24 @@ Edit `.env` with your actual API keys and configuration. See [Environment Config
 ### 4. Start Redis (if not already running)
 
 Using Docker:
+
 ```bash
 docker run -d -p 6379:6379 redis:alpine
 ```
 
 Or using Docker Compose, create a `docker-compose.yml`:
+
 ```yaml
 version: '3.8'
 services:
   redis:
     image: redis:alpine
     ports:
-      - "6379:6379"
+      - '6379:6379'
 ```
 
 Then run:
+
 ```bash
 docker-compose up -d
 ```
@@ -122,7 +126,8 @@ STRIPE_PRICE_PREMIUM=price_xxx_premium
 STRIPE_PRICE_ULT=price_xxx_ultimate
 ```
 
-**Important**: 
+**Important**:
+
 - Never commit `.env` files to version control
 - Use strong, unique values for secrets in production
 - Reference `.env.example` for the complete list of variables
@@ -138,6 +143,7 @@ npm run dev
 ```
 
 This starts:
+
 - Frontend dev server on http://localhost:5173
 - Backend API server on http://localhost:3001
 
@@ -240,6 +246,7 @@ npm run start
 ```
 
 Make sure to:
+
 1. Set `NODE_ENV=production` in your environment
 2. Configure all required environment variables
 3. Have Redis running and accessible
@@ -294,6 +301,7 @@ fly deploy
 #### Vercel (Frontend) + Railway/Render (Backend)
 
 Deploy frontend to Vercel:
+
 ```bash
 npm install -g vercel
 vercel
@@ -312,6 +320,7 @@ The repository includes a GitHub Actions workflow (`.github/workflows/ci.yml`) t
 5. **Deploys** (configure for your platform)
 
 Required GitHub Secrets:
+
 - `DEPLOY_TOKEN` or platform-specific credentials
 - All environment variables from `.env.example`
 
@@ -348,10 +357,12 @@ gnidoctercesv1/
 ## API Endpoints
 
 ### Health & Status
+
 - `GET /api/health` - Health check
 - `GET /api/key-status` - Check configured AI providers
 
 ### Build Management
+
 - `POST /api/builds` - Create new build job
 - `GET /api/builds/:id/status` - Get build status
 - `GET /api/builds/:id` - Get build result
@@ -381,6 +392,7 @@ docker ps | grep redis
 ### Port Already in Use
 
 Change the port in `.env`:
+
 ```env
 PORT=3002
 ```
@@ -388,6 +400,7 @@ PORT=3002
 ### Build Errors
 
 Clear cache and reinstall:
+
 ```bash
 rm -rf node_modules package-lock.json dist
 npm install
@@ -403,6 +416,7 @@ npm run build
 5. Open a Pull Request
 
 Please ensure:
+
 - Tests pass: `npm test`
 - Code is linted: `npm run lint`
 - Code is formatted: `npm run format`

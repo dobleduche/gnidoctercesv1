@@ -1,12 +1,10 @@
-
-
 export enum GenerationState {
   IDLE = 'IDLE',
   ENGINEERING_PROMPT = 'ENGINEERING_PROMPT',
   RUNNING = 'RUNNING',
   PARTIAL_COMPLETED = 'PARTIAL_COMPLETED',
   COMPLETED = 'COMPLETED',
-  ERROR = 'ERROR'
+  ERROR = 'ERROR',
 }
 
 export type AgentStatusType = 'pending' | 'running' | 'success' | 'error' | 'retrying';
@@ -55,14 +53,14 @@ export interface ProjectChatMessage {
 }
 
 export interface FileTreeNode {
-  name:string;
+  name: string;
   type: 'folder' | 'file';
   path: string;
   comment?: string;
   children?: FileTreeNode[];
 }
 
-export type AIModel = "gemini" | "openai" | "anthropic" | "deepseek" | "xai" | "grok";
+export type AIModel = 'gemini' | 'openai' | 'anthropic' | 'deepseek' | 'xai' | 'grok';
 export type TierId = 'spark' | 'forge' | 'foundry' | 'obsidian' | 'apex';
 
 export interface Commit {
@@ -73,12 +71,12 @@ export interface Commit {
 }
 
 export interface RefinedPrompt {
-    goals: string[];
-    constraints: string[];
-    stack: string[];
-    data: string[];
-    evaluation: string[];
-    final_prompt: string;
+  goals: string[];
+  constraints: string[];
+  stack: string[];
+  data: string[];
+  evaluation: string[];
+  final_prompt: string;
 }
 
 export interface ChatMessage {

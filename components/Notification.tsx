@@ -15,7 +15,10 @@ interface NotificationProps {
   onClose: () => void;
 }
 
-const notificationConfig: Record<NotificationType, { Icon: React.FC<{ className?: string }>; color: string; borderColor: string }> = {
+const notificationConfig: Record<
+  NotificationType,
+  { Icon: React.FC<{ className?: string }>; color: string; borderColor: string }
+> = {
   warning: { Icon: InfoIcon, color: 'text-yellow-400', borderColor: 'border-yellow-500/50' },
   info: { Icon: InfoIcon, color: 'text-cyan', borderColor: 'border-cyan/50' },
   error: { Icon: ErrorIcon, color: 'text-red-400', borderColor: 'border-red-500/50' },
@@ -34,7 +37,11 @@ const Notification: React.FC<NotificationProps> = ({ notification, onClose }) =>
   }, [notification, onClose]);
 
   return (
-    <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] w-[calc(100%-2rem)] max-w-md" role="alert" aria-live="assertive">
+    <div
+      className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] w-[calc(100%-2rem)] max-w-md"
+      role="alert"
+      aria-live="assertive"
+    >
       <AnimatePresence>
         {notification &&
           (() => {
@@ -50,12 +57,8 @@ const Notification: React.FC<NotificationProps> = ({ notification, onClose }) =>
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                 className={`flex items-center gap-4 p-4 rounded-xl shadow-lg bg-glass-bg border ${config.borderColor}`}
               >
-                <Icon
-                  className={`h-6 w-6 flex-shrink-0 ${config.color}`}
-                />
-                <span className="flex-grow text-sm text-gray-200">
-                  {notification.message}
-                </span>
+                <Icon className={`h-6 w-6 flex-shrink-0 ${config.color}`} />
+                <span className="flex-grow text-sm text-gray-200">{notification.message}</span>
                 <button
                   onClick={onClose}
                   className="p-1 rounded-full hover:bg-white/10 transition-colors"

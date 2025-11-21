@@ -14,9 +14,11 @@ const PORT = process.env.PORT || 3001;
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 // Security middleware
-app.use(helmet({
-  contentSecurityPolicy: isDevelopment ? false : undefined,
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: isDevelopment ? false : undefined,
+  })
+);
 
 // Rate limiting
 const limiter = rateLimit({
@@ -31,7 +33,7 @@ app.use('/api', limiter);
 
 // CORS configuration
 const corsOptions = {
-  origin: isDevelopment 
+  origin: isDevelopment
     ? ['http://localhost:5173', 'http://localhost:3000']
     : process.env.APP_BASE_URL?.split(',') || [],
   credentials: true,
@@ -58,7 +60,7 @@ app.get('/api/key-status', (_req, res) => {
   res.json({
     gemini: !!process.env.GEMINI_API_KEY,
     openai: !!process.env.OPENAI_API_KEY,
-    anthropic: !!process.env.ANTHROPIC_API_KEY
+    anthropic: !!process.env.ANTHROPIC_API_KEY,
   });
 });
 
@@ -80,17 +82,17 @@ app.post('/api/builds', async (req, res) => {
     description,
     features: Array.isArray(features) ? features : [],
     includeAuth: !!includeAuth,
-    includeBilling: !!includeBilling
+    includeBilling: !!includeBilling,
   };
 
   await buildQueue.add('build', buildReq, {
     removeOnComplete: true,
-    removeOnFail: false
+    removeOnFail: false,
   });
 
   res.status(202).json({
     buildId: id,
-    status: 'queued'
+    status: 'queued',
   });
 });
 

@@ -7,7 +7,7 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
     "types": ["node", "vite/client"],
-    
+
     /* Bundler mode */
     "moduleResolution": "bundler",
     "isolatedModules": true,
@@ -15,18 +15,18 @@
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "noEmit": true,
-    
+
     /* JSX */
     "jsx": "react-jsx",
     "allowJs": true,
-    
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
-    
+
     /* Path mapping */
     "paths": {
       "@/*": ["./*"]

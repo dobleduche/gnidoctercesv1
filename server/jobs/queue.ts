@@ -1,4 +1,3 @@
-
 type Job = () => Promise<void>;
 
 const jobQueue: Job[] = [];
@@ -22,10 +21,10 @@ const processQueue = async () => {
     try {
       await job();
     } catch (error) {
-      console.error("Error processing job:", error);
+      console.error('Error processing job:', error);
     }
   }
-  
+
   // Simulate async agent execution with a small delay
   setTimeout(processQueue, 500);
 };

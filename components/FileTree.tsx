@@ -15,7 +15,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ node, level, onFileSelect, selected
   const isFolder = node.type === 'folder';
   const Icon = isFolder ? FolderIcon : FileIcon;
   // Expand first two levels by default for a better initial view
-  const [isOpen, setIsOpen] = useState(level < 2); 
+  const [isOpen, setIsOpen] = useState(level < 2);
 
   const handleToggle = () => {
     if (isFolder) {
@@ -35,7 +35,9 @@ const TreeNode: React.FC<TreeNodeProps> = ({ node, level, onFileSelect, selected
         onClick={handleToggle}
         role="button"
         tabIndex={0}
-        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleToggle(); }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') handleToggle();
+        }}
       >
         <div className="w-5 h-5 flex items-center justify-center flex-shrink-0 mr-1">
           {isFolder && (
@@ -45,15 +47,29 @@ const TreeNode: React.FC<TreeNodeProps> = ({ node, level, onFileSelect, selected
             />
           )}
         </div>
-        
+
         <Icon className="h-4 w-4 mr-2 text-cyan flex-shrink-0" aria-hidden="true" />
-        <span className={`text-sm select-none ${isSelected ? 'text-cyan font-semibold' : 'text-gray-300'}`}>{node.name}</span>
-        {node.comment && <span className="ml-4 text-gray-500 text-xs truncate hidden sm:inline" aria-hidden="true"># {node.comment}</span>}
+        <span
+          className={`text-sm select-none ${isSelected ? 'text-cyan font-semibold' : 'text-gray-300'}`}
+        >
+          {node.name}
+        </span>
+        {node.comment && (
+          <span className="ml-4 text-gray-500 text-xs truncate hidden sm:inline" aria-hidden="true">
+            # {node.comment}
+          </span>
+        )}
       </div>
       {isFolder && isOpen && node.children && (
         <div role="group">
           {node.children.map((child, index) => (
-            <TreeNode key={index} node={child} level={level + 1} onFileSelect={onFileSelect} selectedFile={selectedFile} />
+            <TreeNode
+              key={index}
+              node={child}
+              level={level + 1}
+              onFileSelect={onFileSelect}
+              selectedFile={selectedFile}
+            />
           ))}
         </div>
       )}

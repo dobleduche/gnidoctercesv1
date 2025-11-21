@@ -21,23 +21,25 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // You can also log the error to an error reporting service
-    console.error("Uncaught error:", error, errorInfo);
+    console.error('Uncaught error:', error, errorInfo);
   }
 
   render() {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen flex items-center justify-center bg-dark-bg text-gray-200">
-            <div className="text-center p-8 bg-glass-bg border border-red-500 rounded-lg">
-                <h1 className="text-2xl font-orbitron text-red-400">Something went wrong.</h1>
-                <p className="mt-4 text-gray-400">An unexpected error occurred. Please try refreshing the page.</p>
-                <button 
-                    onClick={() => window.location.reload()}
-                    className="mt-6 px-6 py-2 bg-red-500/20 text-red-300 rounded hover:bg-red-500/40 transition-colors"
-                >
-                    Refresh Page
-                </button>
-            </div>
+          <div className="text-center p-8 bg-glass-bg border border-red-500 rounded-lg">
+            <h1 className="text-2xl font-orbitron text-red-400">Something went wrong.</h1>
+            <p className="mt-4 text-gray-400">
+              An unexpected error occurred. Please try refreshing the page.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-6 px-6 py-2 bg-red-500/20 text-red-300 rounded hover:bg-red-500/40 transition-colors"
+            >
+              Refresh Page
+            </button>
+          </div>
         </div>
       );
     }

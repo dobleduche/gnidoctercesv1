@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckIcon } from './icons/CheckIcon';
@@ -56,12 +55,20 @@ const CookieConsent: React.FC<CookieConsentProps> = ({ onOpenPrivacyPolicy }) =>
               <InfoIcon className="h-8 w-8 text-cyan" />
             </div>
             <div className="flex-grow text-center md:text-left">
-              <h2 id="cookie-consent-title" className="font-bold text-gray-100">Your Privacy Matters</h2>
+              <h2 id="cookie-consent-title" className="font-bold text-gray-100">
+                Your Privacy Matters
+              </h2>
               <p id="cookie-consent-description" className="text-sm text-gray-300 mt-1">
-                We use necessary cookies and local storage to make our site work. By clicking “Accept”, you agree to our use of these technologies to enhance your experience. For more details, see our{' '}
-                <button onClick={onOpenPrivacyPolicy} className="text-cyan hover:underline focus:outline-none">
+                We use necessary cookies and local storage to make our site work. By clicking
+                “Accept”, you agree to our use of these technologies to enhance your experience. For
+                more details, see our{' '}
+                <button
+                  onClick={onOpenPrivacyPolicy}
+                  className="text-cyan hover:underline focus:outline-none"
+                >
                   Privacy Policy
-                </button>.
+                </button>
+                .
               </p>
             </div>
             <div className="flex-shrink-0 w-full md:w-auto mt-2 md:mt-0">

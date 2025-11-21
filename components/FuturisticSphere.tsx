@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 const FuturisticSphere: React.FC = () => (

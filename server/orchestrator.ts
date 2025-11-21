@@ -9,8 +9,8 @@ export interface BuildRequest {
   id: string;
   target: BuildTarget;
   stack: 'react-vite' | 'next-js' | 'react-native';
-  description: string;        // what they want built
-  features: string[];         // bullet requirements
+  description: string; // what they want built
+  features: string[]; // bullet requirements
   includeAuth: boolean;
   includeBilling: boolean;
 }
@@ -18,8 +18,8 @@ export interface BuildRequest {
 export interface BuildResult {
   buildId: string;
   artifactType: 'monorepo' | 'frontend-only';
-  previewEntry: string;                // e.g. /api/builds/:id/preview
-  files: Record<string, string>;       // path => file contents
+  previewEntry: string; // e.g. /api/builds/:id/preview
+  files: Record<string, string>; // path => file contents
   summary: string;
   target: BuildTarget;
   stack: BuildRequest['stack'];
@@ -35,13 +35,9 @@ const hasOpenAI = !!process.env.OPENAI_API_KEY;
 const hasAnthropic = !!process.env.ANTHROPIC_API_KEY;
 
 // Instantiate clients only if keys exist
-const geminiClient = hasGemini
-  ? new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
-  : null;
+const geminiClient = hasGemini ? new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }) : null;
 
-const openaiClient = hasOpenAI
-  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
-  : null;
+const openaiClient = hasOpenAI ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
 
 const anthropicClient = hasAnthropic
   ? new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
@@ -57,7 +53,7 @@ export async function runBuildPipeline(req: BuildRequest): Promise<BuildResult> 
   const [gResp, oResp, aResp] = await Promise.all([
     hasGemini ? callGemini(sysPrompt) : null,
     hasOpenAI ? callOpenAI(sysPrompt) : null,
-    hasAnthropic ? callAnthropic(sysPrompt) : null
+    hasAnthropic ? callAnthropic(sysPrompt) : null,
   ]);
 
   const candidates = [gResp, oResp, aResp].filter(Boolean) as string[];
@@ -76,7 +72,7 @@ export async function runBuildPipeline(req: BuildRequest): Promise<BuildResult> 
     files,
     summary: `Build ${req.id} generated using ${candidates.length} model(s) with cross-evaluated code quality.`,
     target: req.target,
-    stack: req.stack
+    stack: req.stack,
   };
 }
 
@@ -113,7 +109,7 @@ Requirements:
   const [gResp, oResp, aResp] = await Promise.all([
     hasGemini ? callGemini(refinementPrompt) : null,
     hasOpenAI ? callOpenAI(refinementPrompt) : null,
-    hasAnthropic ? callAnthropic(refinementPrompt) : null
+    hasAnthropic ? callAnthropic(refinementPrompt) : null,
   ]);
 
   const candidates = [gResp, oResp, aResp].filter(Boolean) as string[];
@@ -127,7 +123,7 @@ Requirements:
   return {
     ...original,
     files,
-    summary: `${original.summary || ''}\nRefined with new instructions.`
+    summary: `${original.summary || ''}\nRefined with new instructions.`,
   };
 }
 
@@ -147,7 +143,7 @@ Description:
 ${req.description}
 
 Must-haves:
-${req.features.map(f => `- ${f}`).join('\n')}
+${req.features.map((f) => `- ${f}`).join('\n')}
 
 Requirements:
 - Return a SINGLE JSON object with this exact shape:
@@ -173,10 +169,10 @@ async function callGemini(prompt: string): Promise<string> {
 
   const result = await geminiClient.models.generateContent({
     model: 'gemini-2.5-flash',
-    contents: [{ role: 'user', parts: [{ text: prompt }] }]
+    contents: [{ role: 'user', parts: [{ text: prompt }] }],
   });
 
-  // @google/genai convenience shortcut: response.text 
+  // @google/genai convenience shortcut: response.text
   const text = (result as any)?.text ?? '';
   return text.trim();
 }
@@ -188,9 +184,9 @@ async function callOpenAI(prompt: string): Promise<string> {
     model: 'gpt-4.1-mini',
     messages: [
       { role: 'system', content: 'You output only JSON as instructed.' },
-      { role: 'user', content: prompt }
+      { role: 'user', content: prompt },
     ],
-    temperature: 0.3
+    temperature: 0.3,
   });
 
   const text = resp.choices[0]?.message?.content || '';
@@ -204,15 +200,11 @@ async function callAnthropic(prompt: string): Promise<string> {
     model: 'claude-3.5-sonnet',
     max_tokens: 4096,
     system: 'You output only JSON as instructed.',
-    messages: [
-      { role: 'user', content: prompt }
-    ]
+    messages: [{ role: 'user', content: prompt }],
   });
 
   // content[] is blocks; text lives on text blocks
-  const text = (msg.content as any[])
-    .map(block => (block as any).text ?? '')
-    .join('\n');
+  const text = (msg.content as any[]).map((block) => (block as any).text ?? '').join('\n');
 
   return text.trim();
 }
@@ -233,10 +225,7 @@ function pickBestCandidate(candidates: string[]): string {
 
       const fileEntries = Object.entries(parsed.files);
       const fileCount = fileEntries.length;
-      const totalLength = fileEntries.reduce(
-        (sum, [, content]) => sum + content.length,
-        0
-      );
+      const totalLength = fileEntries.reduce((sum, [, content]) => sum + content.length, 0);
 
       const score = fileCount * 10 + totalLength / 1000;
       if (score > bestScore) {

@@ -23,7 +23,7 @@ app.get('/api/models', (req, res) => {
     { id: 'claude-3-sonnet', name: 'Claude 3 Sonnet', provider: 'anthropic' },
     { id: 'deepseek-coder', name: 'DeepSeek Coder', provider: 'deepseek' },
     { id: 'gpt-4', name: 'GPT-4', provider: 'openai' },
-    { id: 'grok-beta', name: 'Grok Beta', provider: 'xai' }
+    { id: 'grok-beta', name: 'Grok Beta', provider: 'xai' },
   ];
   res.json(models);
 });
@@ -35,7 +35,7 @@ app.get('/api/key-status', (req, res) => {
     anthropic: !!process.env.ANTHROPIC_API_KEY,
     deepseek: !!process.env.DEEPSEEK_API_KEY,
     openai: !!process.env.OPENAI_API_KEY,
-    xai: !!process.env.XAI_API_KEY
+    xai: !!process.env.XAI_API_KEY,
   });
 });
 
@@ -46,7 +46,7 @@ app.get('/api/ai/key-status', (req, res) => {
     anthropic: !!process.env.ANTHROPIC_API_KEY,
     deepseek: !!process.env.DEEPSEEK_API_KEY,
     openai: !!process.env.OPENAI_API_KEY,
-    xai: !!process.env.XAI_API_KEY
+    xai: !!process.env.XAI_API_KEY,
   });
 });
 
@@ -55,8 +55,9 @@ app.post('/api/proxy/anthropic', async (req, res) => {
   try {
     // Mock response since we don't have actual Anthropic API integration yet
     res.json({
-      message: "Anthropic API proxy is working! Add your ANTHROPIC_API_KEY to .env to use real API.",
-      status: "mock_response"
+      message:
+        'Anthropic API proxy is working! Add your ANTHROPIC_API_KEY to .env to use real API.',
+      status: 'mock_response',
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -69,10 +70,10 @@ app.get('/api/ai/list-gemini-models', async (req, res) => {
     // Mock response with Gemini models
     res.json({
       models: [
-        { name: "gemini-pro", description: "Gemini Pro" },
-        { name: "gemini-pro-vision", description: "Gemini Pro Vision" }
+        { name: 'gemini-pro', description: 'Gemini Pro' },
+        { name: 'gemini-pro-vision', description: 'Gemini Pro Vision' },
       ],
-      message: "Add your GEMINI_API_KEY to .env to fetch real models from Google AI"
+      message: 'Add your GEMINI_API_KEY to .env to fetch real models from Google AI',
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -83,7 +84,7 @@ app.get('/api/ai/list-gemini-models', async (req, res) => {
 app.post('/api/chat/completions', async (req, res) => {
   try {
     const { model, messages } = req.body;
-    
+
     const response = {
       id: 'chatcmpl-' + Date.now(),
       object: 'chat.completion',
@@ -94,18 +95,19 @@ app.post('/api/chat/completions', async (req, res) => {
           index: 0,
           message: {
             role: 'assistant',
-            content: 'Hello! This is a test response from the backend server. Your API is working correctly! Configure your API keys in the .env file to use real AI models.'
+            content:
+              'Hello! This is a test response from the backend server. Your API is working correctly! Configure your API keys in the .env file to use real AI models.',
           },
-          finish_reason: 'stop'
-        }
+          finish_reason: 'stop',
+        },
       ],
       usage: {
         prompt_tokens: 10,
         completion_tokens: 15,
-        total_tokens: 25
-      }
+        total_tokens: 25,
+      },
     };
-    
+
     res.json(response);
   } catch (error) {
     console.error('Chat completion error:', error);

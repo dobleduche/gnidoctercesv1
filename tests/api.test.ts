@@ -18,10 +18,10 @@ describe('Build Queue Configuration', () => {
     const mockQueue = {
       name: 'buildQueue',
       options: {
-        connection: { host: 'localhost', port: 6379 }
-      }
+        connection: { host: 'localhost', port: 6379 },
+      },
     };
-    
+
     expect(mockQueue.name).toBe('buildQueue');
     expect(mockQueue.options.connection.host).toBe('localhost');
   });
@@ -33,7 +33,7 @@ describe('Security Middleware', () => {
       windowMs: 15 * 60 * 1000,
       max: 100,
     };
-    
+
     expect(rateLimitConfig.windowMs).toBe(900000);
     expect(rateLimitConfig.max).toBe(100);
   });
@@ -43,7 +43,7 @@ describe('Security Middleware', () => {
       origin: ['http://localhost:5173'],
       credentials: true,
     };
-    
+
     expect(corsOptions.origin).toContain('http://localhost:5173');
     expect(corsOptions.credentials).toBe(true);
   });

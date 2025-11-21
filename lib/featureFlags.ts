@@ -37,7 +37,7 @@ export const useFeatureFlags = () => {
   }, []);
 
   const updateFlag = useCallback((flag: FeatureFlagId, value: boolean) => {
-    setFlags(prevFlags => {
+    setFlags((prevFlags) => {
       const newFlags = { ...prevFlags, [flag]: value };
       try {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newFlags));
