@@ -82,7 +82,7 @@ self.addEventListener('fetch', (event) => {
       }).catch(() => {
         // Network request failed and no cache available
         // Return a fallback response for HTML requests
-        if (request.headers.get('accept').includes('text/html')) {
+        if (request.headers?.get('accept')?.includes('text/html')) {
           return new Response(
             '<html><body><h1>Offline</h1><p>Please check your internet connection.</p></body></html>',
             { headers: { 'Content-Type': 'text/html' } }
