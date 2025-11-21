@@ -4,30 +4,31 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import Footer from './components/Footer';
 import FuturisticSphere from './components/FuturisticSphere';
-import Tour from './components/Tour';
 import PromptInput from './components/PromptInput';
 import AgentPipeline from './components/AgentPipeline';
 import ResultsDisplay from './components/ResultsDisplay';
 import ProgressBar from './components/ProgressBar';
-import UpgradeModal from './components/UpgradeModal';
-import PrivacyPolicyModal from './components/PrivacyPolicyModal';
 import PromptEngineer from './components/PromptEngineer';
-import OrchestrationScreen from './components/OrchestrationScreen';
 import { useAppGenerator } from './hooks/useAppGenerator';
 import { GenerationState, AgentStatus, TierId, AIModel } from './types';
-import ReferralsModal from './components/ReferralsModal';
 import Notification from './components/Notification';
-import ChatWidget from './components/ChatWidget';
-import AgentDetailModal from './components/AgentDetailModal';
 import { useFeatureFlags } from './lib/featureFlags';
 import { useUserStore } from './state/userStore';
 import { useAuth } from './hooks/useAuth';
 import useDarkMode from './hooks/useDarkMode';
-import UserProfileModal from './components/UserProfileModal';
 import CookieConsent from './components/CookieConsent';
 
+// Lazy load heavy components and modals
 const Features = lazy(() => import('./components/Features'));
 const FAQ = lazy(() => import('./components/FAQ'));
+const Tour = lazy(() => import('./components/Tour'));
+const UpgradeModal = lazy(() => import('./components/UpgradeModal'));
+const PrivacyPolicyModal = lazy(() => import('./components/PrivacyPolicyModal'));
+const OrchestrationScreen = lazy(() => import('./components/OrchestrationScreen'));
+const ReferralsModal = lazy(() => import('./components/ReferralsModal'));
+const ChatWidget = lazy(() => import('./components/ChatWidget'));
+const AgentDetailModal = lazy(() => import('./components/AgentDetailModal'));
+const UserProfileModal = lazy(() => import('./components/UserProfileModal'));
 
 const Loader: React.FC = () => (
   <div className="flex justify-center items-center py-32" role="status" aria-label="Loading content">
@@ -274,31 +275,33 @@ const App: React.FC = () => {
         </main>
         <Footer onOpenPrivacyPolicy={openPrivacyModal} isDevPanelOpen={isDevPanelOpen} />
       </div>
-      <Tour isOpen={isTourOpen} onClose={() => setIsTourOpen(false)} />
-      {flags.ff_payments && <UpgradeModal isOpen={isUpgradeModalOpen} onClose={() => setIsUpgradeModalOpen(false)} onUpgrade={handleModalUpgrade} />}
-      <PrivacyPolicyModal isOpen={isPrivacyModalOpen} onClose={() => setIsPrivacyModalOpen(false)} />
-      {flags.ff_beta_dashboard && <OrchestrationScreen 
-        isOpen={isOrchestrationScreenOpen} 
-        onClose={() => setIsOrchestrationScreen(false)} 
-        onUpgrade={handleOrchestrationUpgrade}
-        currentTierId={selectedTier}
-        flags={flags}
-      />}
-       <ReferralsModal 
-        isOpen={isReferralsModalOpen} 
-        onClose={() => setIsReferralsModalOpen(false)}
-        referralLink={referralLink}
-      />
-       <AgentDetailModal 
-        isOpen={!!selectedAgent} 
-        onClose={handleCloseAgentModal} 
-        agent={selectedAgent} 
-      />
-      <UserProfileModal
-        isOpen={isUserProfileOpen}
-        onClose={() => setIsUserProfileOpen(false)}
-      />
-      {flags.ff_ai_features && <ChatWidget />}
+      <Suspense fallback={null}>
+        {isTourOpen && <Tour isOpen={isTourOpen} onClose={() => setIsTourOpen(false)} />}
+        {flags.ff_payments && isUpgradeModalOpen && <UpgradeModal isOpen={isUpgradeModalOpen} onClose={() => setIsUpgradeModalOpen(false)} onUpgrade={handleModalUpgrade} />}
+        {isPrivacyModalOpen && <PrivacyPolicyModal isOpen={isPrivacyModalOpen} onClose={() => setIsPrivacyModalOpen(false)} />}
+        {flags.ff_beta_dashboard && isOrchestrationScreenOpen && <OrchestrationScreen 
+          isOpen={isOrchestrationScreenOpen} 
+          onClose={() => setIsOrchestrationScreen(false)} 
+          onUpgrade={handleOrchestrationUpgrade}
+          currentTierId={selectedTier}
+          flags={flags}
+        />}
+        {isReferralsModalOpen && <ReferralsModal 
+          isOpen={isReferralsModalOpen} 
+          onClose={() => setIsReferralsModalOpen(false)}
+          referralLink={referralLink}
+        />}
+        {selectedAgent && <AgentDetailModal 
+          isOpen={!!selectedAgent} 
+          onClose={handleCloseAgentModal} 
+          agent={selectedAgent} 
+        />}
+        {isUserProfileOpen && <UserProfileModal
+          isOpen={isUserProfileOpen}
+          onClose={() => setIsUserProfileOpen(false)}
+        />}
+        {flags.ff_ai_features && <ChatWidget />}
+      </Suspense>
       <CookieConsent onOpenPrivacyPolicy={openPrivacyModal} />
     </div>
   );
