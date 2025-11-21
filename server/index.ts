@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import { randomUUID } from 'crypto';
 import { buildQueue, initBuildWorker } from './queue.js';
 import { BuildRequest, BuildResult } from './orchestrator.js';
@@ -9,9 +11,36 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
-app.use(cors());
-app.use(express.json());
+// Security middleware
+app.use(helmet({
+  contentSecurityPolicy: isDevelopment ? false : undefined,
+}));
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: isDevelopment ? 1000 : 100, // limit each IP
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use('/api', limiter);
+
+// CORS configuration
+const corsOptions = {
+  origin: isDevelopment 
+    ? ['http://localhost:5173', 'http://localhost:3000']
+    : process.env.APP_BASE_URL?.split(',') || [],
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // In-memory store for demo; you can swap this with Redis/Postgres later.
 const buildResults = new Map<string, BuildResult>();
@@ -119,7 +148,7 @@ const connection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379'
 const events = new QueueEvents('buildQueue', { connection });
 
 events.on('completed', async ({ jobId, returnvalue }) => {
-  const result = returnvalue as BuildResult;
+  const result = returnvalue as unknown as BuildResult;
   buildResults.set(result.buildId, result);
   console.log(`📦 Build ${result.buildId} stored in memory from job ${jobId}`);
 });
