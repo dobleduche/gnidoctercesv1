@@ -19,8 +19,8 @@
     <link rel="manifest" href="/manifest.json">
     <title>gnidoC terceS</title>
     
-    <!-- Load Tailwind CSS with defer for non-blocking -->
-    <script src="https://cdn.tailwindcss.com" defer></script>
+    <!-- Load Tailwind CSS without defer to prevent FOUC -->
+    <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Preload critical fonts with display swap -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
