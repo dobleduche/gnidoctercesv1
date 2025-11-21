@@ -4,14 +4,18 @@ import dotenv from 'dotenv';
 import { randomUUID } from 'crypto';
 import { buildQueue, initBuildWorker } from './queue.js';
 import { BuildRequest, BuildResult } from './orchestrator.js';
+import { redisRateLimiter } from './middleware/rateLimiter.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Respect upstream proxy headers so rate limiting and logging use client IPs.
+app.set('trust proxy', true);
 app.use(cors());
 app.use(express.json());
+app.use(redisRateLimiter);
 
 // In-memory store for demo; you can swap this with Redis/Postgres later.
 const buildResults = new Map<string, BuildResult>();
