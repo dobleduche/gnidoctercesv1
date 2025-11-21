@@ -64,7 +64,7 @@ github.post('/create-repo', githubLimiter, async (req: express.Request, res: exp
 
     return res.json({ ok: true, repoUrl });
   } catch (err: any) {
-    console.error(`[${projectId}] GitHub process failed:`, err);
+    console.error('[%s] GitHub process failed:', projectId, err);
     return res
       .status(500)
       .json({ ok: false, error: err?.message ?? 'Failed to create repository' });
