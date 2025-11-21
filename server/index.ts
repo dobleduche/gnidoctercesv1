@@ -16,7 +16,17 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 // Security middleware
 app.use(
   helmet({
-    contentSecurityPolicy: isDevelopment ? false : undefined,
+    contentSecurityPolicy: isDevelopment
+      ? {
+          directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", 'data:', 'https:'],
+            connectSrc: ["'self'", 'http://localhost:*', 'ws://localhost:*'],
+          },
+        }
+      : undefined,
   })
 );
 
@@ -149,10 +159,24 @@ import IORedis from 'ioredis';
 const connection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379');
 const events = new QueueEvents('buildQueue', { connection });
 
+// Type guard to validate BuildResult structure
+function isBuildResult(value: unknown): value is BuildResult {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'buildId' in value &&
+    'files' in value &&
+    typeof (value as BuildResult).buildId === 'string'
+  );
+}
+
 events.on('completed', async ({ jobId, returnvalue }) => {
-  const result = returnvalue as unknown as BuildResult;
-  buildResults.set(result.buildId, result);
-  console.log(`📦 Build ${result.buildId} stored in memory from job ${jobId}`);
+  if (isBuildResult(returnvalue)) {
+    buildResults.set(returnvalue.buildId, returnvalue);
+    console.log(`📦 Build ${returnvalue.buildId} stored in memory from job ${jobId}`);
+  } else {
+    console.error(`⚠️ Invalid build result received for job ${jobId}`);
+  }
 });
 
 // Start server

@@ -1,5 +1,6 @@
 // Fix: Use default express import to avoid type conflicts.
 import express from 'express';
+import rateLimit from 'express-rate-limit';
 import path from 'path';
 import util from 'util';
 import { exec } from 'child_process';
@@ -8,8 +9,17 @@ import process from 'process';
 const execPromise = util.promisify(exec);
 export const github = express.Router();
 
+// Strict rate limiting for GitHub operations (system commands)
+const githubLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5, // limit each IP to 5 requests per hour
+  message: 'Too many GitHub repository creation requests, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Fix: Use explicit express types for req and res.
-github.post('/create-repo', async (req: express.Request, res: express.Response) => {
+github.post('/create-repo', githubLimiter, async (req: express.Request, res: express.Response) => {
   const { projectId, appName } = req.body;
   if (!projectId || !appName) {
     return res.status(400).json({ ok: false, error: 'Missing projectId or appName' });
