@@ -1,5 +1,5 @@
 <div align="center">
-<img width="1200" height="475" alt="GHBanner" src="[https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6](https://teal-passing-reindeer-818.mypinata.cloud/ipfs/bafybeihbbowoutdddsedtkkr7qek2vo7njxji4qinvs3kudutramhhxqxa?pinataGatewayToken=3QZVqN53_IqLl-7ymJB2F9etizklu216GT0QH8e-WThYkLBcwHhTVE-xZJITrwQn)" />
+<img width="1200" height="475" alt="GHBanner" src="https://teal-passing-reindeer-818.mypinata.cloud/ipfs/bafybeihbbowoutdddsedtkkr7qek2vo7njxji4qinvs3kudutramhhxqxa?pinataGatewayToken=3QZVqN53_IqLl-7ymJB2F9etizklu216GT0QH8e-WThYkLBcwHhTVE-xZJITrwQn" />
 </div>
 
 # gnidoC terceS - Multi-AI Orchestration Engine
